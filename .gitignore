@@ -2,3 +2,7 @@
 node_modules
 
 **/.claude/settings.local.json
+
+# Local process mapping files (not committed to repo)
+hal-process-map.md
+hal-process-summary.md
