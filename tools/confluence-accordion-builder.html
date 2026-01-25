@@ -1,0 +1,2456 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confluence Accordion Builder - Professional Edition</title>
+    <style>
+      :root {
+        --primary-color: #00acc1;
+        --primary-hover: #0097a7;
+        --success-color: #48bb78;
+        --danger-color: #f56565;
+        --warning-color: #f9a825;
+        --neutral-dark: #4a4a4a;
+        --neutral-medium: #6e6e6e;
+        --neutral-light: #9e9e9e;
+        --neutral-lighter: #d0d0d0;
+        --bg-light: #f7fafc;
+        --bg-white: #ffffff;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+        --transition: all 0.2s ease;
+        --spacing-xs: 4px;
+        --spacing-sm: 8px;
+        --spacing-md: 16px;
+        --spacing-lg: 24px;
+        --spacing-xl: 32px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: var(--spacing-md);
+        color: var(--neutral-dark);
+      }
+
+      /* Layout */
+      .app-container {
+        max-width: 1800px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 280px 1fr 1fr;
+        gap: var(--spacing-md);
+        align-items: start;
+      }
+
+      @media (max-width: 1400px) {
+        .app-container {
+          grid-template-columns: 1fr 1fr;
+        }
+        .templates-panel {
+          grid-column: 1 / -1;
+          max-height: 300px;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .app-container {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Panels */
+      .panel {
+        background: var(--bg-white);
+        border-radius: 12px;
+        box-shadow: var(--shadow-lg);
+        overflow: hidden;
+      }
+
+      .panel-header {
+        padding: var(--spacing-lg);
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          #0097a7 100%
+        );
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 10;
+        flex-shrink: 0;
+      }
+
+      .panel-header h1 {
+        font-size: 18px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+      }
+
+      .panel-header-actions {
+        display: flex;
+        gap: var(--spacing-sm);
+      }
+
+      .panel-body {
+        padding: var(--spacing-lg);
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .builder-panel .panel-body {
+        max-height: calc(100vh - 180px);
+      }
+
+      .templates-panel .panel-body {
+        max-height: calc(100vh - 180px);
+        overflow-y: auto;
+      }
+
+      .preview-panel .panel-body {
+        max-height: calc(100vh - 220px);
+      }
+
+      /* Templates Panel */
+      .templates-panel {
+        max-height: calc(100vh - 32px);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .template-search {
+        margin-bottom: var(--spacing-md);
+      }
+
+      .template-search input {
+        width: 100%;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 13px;
+        transition: var(--transition);
+      }
+
+      .template-search input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0, 172, 193, 0.1);
+      }
+
+      .templates-grid {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        overflow-y: auto;
+        overflow-x: hidden;
+        flex: 1;
+        padding-right: var(--spacing-xs);
+      }
+
+      .template-card {
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: var(--spacing-md);
+        cursor: pointer;
+        transition: var(--transition);
+        position: relative;
+      }
+
+      .template-card:hover {
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+      }
+
+      .template-card h3 {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--neutral-dark);
+        margin-bottom: var(--spacing-xs);
+      }
+
+      .template-card-meta {
+        font-size: 11px;
+        color: var(--neutral-medium);
+      }
+
+      .template-card-preview {
+        display: flex;
+        gap: 4px;
+        margin-top: var(--spacing-sm);
+      }
+
+      .template-color-dot {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .template-delete {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: var(--danger-color);
+        color: white;
+        border: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        font-size: 12px;
+        cursor: pointer;
+        opacity: 0;
+        transition: var(--transition);
+      }
+
+      .template-card:hover .template-delete {
+        opacity: 1;
+      }
+
+      /* Builder Panel */
+      .builder-panel {
+        max-height: calc(100vh - 32px);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-group {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .form-group label {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        font-weight: 600;
+        color: var(--neutral-dark);
+        margin-bottom: var(--spacing-sm);
+        font-size: 14px;
+      }
+
+      .form-group input[type="number"],
+      .form-group input[type="text"],
+      .form-group textarea,
+      .form-group input[type="color"] {
+        width: 100%;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 13px;
+        transition: var(--transition);
+        font-family: inherit;
+      }
+
+      .form-group input[type="color"] {
+        height: 45px;
+        cursor: pointer;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0, 172, 193, 0.1);
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+        font-size: 13px;
+      }
+
+      /* Rich Text Editor */
+      .editor-container {
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .editor-container:focus-within {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0, 172, 193, 0.1);
+      }
+
+      .editor-toolbar {
+        background: var(--bg-light);
+        border-bottom: 1px solid var(--border-color);
+        padding: var(--spacing-sm);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+
+      .editor-btn {
+        background: white;
+        border: 1px solid var(--border-color);
+        padding: 6px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 500;
+        transition: var(--transition);
+      }
+
+      .editor-btn:hover {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+      }
+
+      .editor-btn.active {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      .editor-content {
+        min-height: 150px;
+        padding: var(--spacing-md);
+        outline: none;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .editor-content:empty::before {
+        content: attr(data-placeholder);
+        color: var(--neutral-light);
+      }
+
+      .toolbar-separator {
+        width: 1px;
+        background: var(--border-color);
+        margin: 0 4px;
+      }
+
+      /* Buttons */
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+      }
+
+      .btn-primary {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .btn-success {
+        background: var(--success-color);
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #38a169;
+      }
+
+      .btn-danger {
+        background: var(--danger-color);
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #e53e3e;
+      }
+
+      .btn-sm {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+
+      .btn-icon {
+        padding: 8px;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .btn-secondary {
+        background: var(--neutral-lighter);
+        color: var(--neutral-dark);
+      }
+
+      .btn-secondary:hover {
+        background: var(--neutral-light);
+      }
+
+      /* Section Items */
+      .sections-container {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-md);
+      }
+
+      .section-item {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        padding: var(--spacing-lg);
+        transition: var(--transition);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .section-item:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+      }
+
+      .section-item.highlight {
+        animation: pulse 0.5s ease;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.02);
+        }
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        margin-bottom: var(--spacing-md);
+        padding-bottom: var(--spacing-sm);
+        border-bottom: 2px solid var(--border-color);
+      }
+
+      .section-number {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 16px;
+        color: white;
+        flex-shrink: 0;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .section-title-input {
+        flex: 1;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .section-title-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+
+      .section-controls {
+        display: flex;
+        gap: var(--spacing-xs);
+        align-items: center;
+      }
+
+      .section-controls input[type="color"] {
+        width: 40px;
+        height: 36px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      .section-delete-btn {
+        background: var(--danger-color);
+        color: white;
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: var(--transition);
+      }
+
+      .section-delete-btn:hover {
+        background: #e53e3e;
+        transform: scale(1.1);
+      }
+
+      /* Preview Panel */
+      .preview-panel {
+        max-height: calc(100vh - 32px);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .tabs {
+        display: flex;
+        background: var(--bg-light);
+        border-bottom: 2px solid var(--border-color);
+      }
+
+      .tab {
+        flex: 1;
+        padding: var(--spacing-md);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--neutral-medium);
+        transition: var(--transition);
+      }
+
+      .tab.active {
+        color: var(--primary-color);
+        border-bottom: 3px solid var(--primary-color);
+        margin-bottom: -2px;
+      }
+
+      .tab-content {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: var(--spacing-md);
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: var(--spacing-xl);
+        color: var(--neutral-medium);
+      }
+
+      .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: var(--spacing-md);
+        opacity: 0.5;
+      }
+
+      /* Accordion Preview Styles */
+      .colorful-accordion {
+        max-width: 900px;
+        margin: 20px 0;
+      }
+
+      .accordion-section {
+        margin-bottom: 10px;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .acc-checkbox {
+        display: none;
+      }
+
+      .acc-header {
+        color: white;
+        padding: 18px 20px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s ease;
+        user-select: none;
+      }
+
+      .acc-header:hover {
+        filter: brightness(1.1);
+        padding-left: 25px;
+      }
+
+      .acc-icon {
+        font-size: 20px;
+        transition: transform 0.3s ease;
+        font-weight: bold;
+      }
+
+      .acc-checkbox:checked + .acc-header .acc-icon {
+        transform: rotate(180deg);
+      }
+
+      .acc-content-wrapper {
+        max-height: 0;
+        overflow: hidden;
+        transition:
+          max-height 0.4s ease,
+          padding 0.4s ease;
+        background: white;
+      }
+
+      .acc-checkbox:checked ~ .acc-content-wrapper {
+        max-height: 2000px;
+        padding: 20px;
+        border-left: 4px solid;
+      }
+
+      .acc-content {
+        color: #333;
+        line-height: 1.6;
+      }
+
+      .acc-content h3 {
+        margin-top: 15px;
+        margin-bottom: 10px;
+        color: #333;
+        font-size: 18px;
+      }
+
+      .acc-content h3:first-child {
+        margin-top: 0;
+      }
+
+      .acc-content p {
+        margin-bottom: 12px;
+      }
+
+      .acc-content ul,
+      .acc-content ol {
+        margin-left: 20px;
+        margin-bottom: 12px;
+      }
+
+      .acc-content li {
+        margin-bottom: 6px;
+      }
+
+      .acc-content strong {
+        color: #6b2976;
+      }
+
+      .highlight-box {
+        background: #f8f9fa;
+        border-left: 4px solid #7cb342;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 4px;
+      }
+
+      .highlight-box strong {
+        color: #7cb342;
+      }
+
+      /* Tables in accordion content */
+      .acc-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        border: 1px solid #ddd;
+      }
+
+      .acc-content table th {
+        background: #f8f9fa;
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        border: 1px solid #ddd;
+        color: #333;
+      }
+
+      .acc-content table td {
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+      }
+
+      .acc-content table tr:nth-child(even) {
+        background: #f8f9fa;
+      }
+
+      .acc-content table tr:hover {
+        background: #e9ecef;
+      }
+
+      /* Confluence Macros */
+      .confluence-macro {
+        background: #f0f5ff;
+        border: 2px dashed #0052cc;
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 12px;
+        white-space: pre-wrap;
+      }
+
+      .editor-content .confluence-macro {
+        cursor: default;
+      }
+
+      /* Code Output */
+      .code-output {
+        background: #1e1e1e;
+        color: #d4d4d4;
+        padding: var(--spacing-lg);
+        border-radius: 8px;
+        font-family: "Monaco", "Menlo", monospace;
+        font-size: 12px;
+        line-height: 1.6;
+        overflow-x: auto;
+      }
+
+      .code-output pre {
+        margin: 0;
+        white-space: pre-wrap;
+      }
+
+      /* Notification */
+      .notification {
+        position: fixed;
+        top: var(--spacing-lg);
+        right: var(--spacing-lg);
+        padding: var(--spacing-md) var(--spacing-lg);
+        background: white;
+        border-radius: 8px;
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+        z-index: 100000;
+        border-left: 4px solid var(--success-color);
+      }
+
+      .notification.show {
+        transform: translateX(0);
+      }
+
+      .notification.success {
+        border-left-color: var(--success-color);
+      }
+      .notification.error {
+        border-left-color: var(--danger-color);
+      }
+      .notification.warning {
+        border-left-color: var(--warning-color);
+      }
+
+      .notification-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: white;
+      }
+
+      .notification.success .notification-icon {
+        background: var(--success-color);
+      }
+      .notification.error .notification-icon {
+        background: var(--danger-color);
+      }
+      .notification.warning .notification-icon {
+        background: var(--warning-color);
+      }
+
+      /* Emoji Picker */
+      .emoji-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+        gap: var(--spacing-xs);
+        max-height: 200px;
+        overflow-y: auto;
+        padding: var(--spacing-sm);
+        background: var(--bg-light);
+        border-radius: 8px;
+        margin-top: var(--spacing-sm);
+      }
+
+      .emoji-item {
+        font-size: 24px;
+        padding: var(--spacing-sm);
+        cursor: pointer;
+        border-radius: 4px;
+        transition: var(--transition);
+        text-align: center;
+      }
+
+      .emoji-item:hover {
+        background: white;
+        transform: scale(1.2);
+      }
+
+      /* Modal */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        padding: var(--spacing-md);
+      }
+
+      .modal-overlay.show {
+        display: flex;
+      }
+
+      body.modal-open {
+        overflow: hidden;
+      }
+
+      .modal {
+        background: white;
+        border-radius: 12px;
+        padding: var(--spacing-xl);
+        max-width: 500px;
+        width: 90%;
+        box-shadow: var(--shadow-lg);
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+
+      .modal-header {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .modal-header h2 {
+        font-size: 20px;
+        color: var(--neutral-dark);
+      }
+
+      .modal-body {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .modal-footer {
+        display: flex;
+        gap: var(--spacing-sm);
+        justify-content: flex-end;
+      }
+
+      /* Macro Grid */
+      .macro-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: var(--spacing-sm);
+        margin-top: var(--spacing-sm);
+      }
+
+      .macro-card {
+        background: white;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: var(--spacing-md);
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-sm);
+        text-align: center;
+      }
+
+      .macro-card:hover {
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+      }
+
+      .macro-card.selected {
+        border-color: var(--primary-color);
+        background: var(--bg-light);
+      }
+
+      .macro-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+      }
+
+      .macro-name {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--neutral-dark);
+      }
+
+      .macro-param-field {
+        margin-bottom: var(--spacing-md);
+      }
+
+      .macro-param-field label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: var(--spacing-xs);
+        color: var(--neutral-dark);
+      }
+
+      .macro-param-field input,
+      .macro-param-field textarea,
+      .macro-param-field select {
+        width: 100%;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border: 2px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 13px;
+        font-family: inherit;
+      }
+
+      .macro-param-field input:focus,
+      .macro-param-field textarea:focus,
+      .macro-param-field select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+
+      /* History Controls */
+      .history-controls {
+        display: flex;
+        gap: var(--spacing-xs);
+        align-items: center;
+      }
+
+      .history-info {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.8);
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* Scrollbar Styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--bg-light);
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--neutral-lighter);
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--neutral-light);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Templates Panel -->
+      <div class="panel templates-panel">
+        <div class="panel-header">
+          <h1>Templates</h1>
+        </div>
+        <div class="panel-body">
+          <div class="template-search">
+            <input
+              type="text"
+              placeholder="Search templates..."
+              id="templateSearch"
+            />
+          </div>
+          <div class="templates-grid" id="templatesGrid"></div>
+          <button
+            class="btn btn-primary btn-sm"
+            style="width: 100%; margin-top: var(--spacing-md)"
+            id="saveTemplateBtn"
+          >
+            Save Current as Template
+          </button>
+        </div>
+      </div>
+
+      <!-- Builder Panel -->
+      <div class="panel builder-panel">
+        <div class="panel-header">
+          <h1>Builder</h1>
+          <div class="panel-header-actions">
+            <div class="history-controls">
+              <button
+                class="btn btn-icon btn-sm"
+                id="undoBtn"
+                disabled
+                title="Undo (Ctrl+Z)"
+              >
+                &#8630;
+              </button>
+              <button
+                class="btn btn-icon btn-sm"
+                id="redoBtn"
+                disabled
+                title="Redo (Ctrl+Y)"
+              >
+                &#8631;
+              </button>
+              <span class="history-info" id="historyInfo">No changes yet</span>
+            </div>
+            <button class="btn btn-danger btn-sm" id="resetBtn">Reset</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="form-group">
+            <label>Number of Sections</label>
+            <div style="display: flex; gap: var(--spacing-sm)">
+              <input
+                type="number"
+                id="sectionCount"
+                min="1"
+                max="20"
+                value="3"
+                style="flex: 1"
+              />
+              <button class="btn btn-primary" id="generateSectionsBtn">
+                Generate Sections
+              </button>
+            </div>
+          </div>
+
+          <div class="sections-container" id="sectionsContainer">
+            <div class="empty-state">
+              <p>Set section count and click Generate</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview Panel -->
+      <div class="panel preview-panel">
+        <div class="panel-header">
+          <h1>Preview</h1>
+          <div class="panel-header-actions">
+            <button class="btn btn-success btn-sm" id="generateCodeBtn">
+              Generate Code
+            </button>
+            <button class="btn btn-primary btn-sm" id="copyCodeBtn">
+              Copy Code
+            </button>
+          </div>
+        </div>
+        <div class="tabs">
+          <button class="tab active" data-tab="preview">Preview</button>
+          <button class="tab" data-tab="code">Code</button>
+        </div>
+        <div class="panel-body">
+          <div id="previewView" class="tab-content">
+            <div id="previewContainer">
+              <div class="empty-state">
+                <div class="empty-state-icon">&#128203;</div>
+                <p>Generate sections to see preview</p>
+              </div>
+            </div>
+          </div>
+          <div id="codeView" class="tab-content" style="display: none">
+            <div class="code-output">
+              <pre id="codeOutput">
+// Click "Generate Code" to see the HTML output</pre
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table Builder Modal -->
+    <div class="modal-overlay" id="tableModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Insert Table</h2>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Number of Rows</label>
+            <input type="number" id="tableRows" min="1" max="20" value="3" />
+          </div>
+          <div class="form-group">
+            <label>Number of Columns</label>
+            <input type="number" id="tableCols" min="1" max="10" value="3" />
+          </div>
+          <div class="form-group">
+            <label
+              style="display: flex; align-items: center; gap: var(--spacing-sm)"
+            >
+              <input type="checkbox" id="tableHeader" checked />
+              Include header row
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="closeTableModalBtn">
+            Cancel
+          </button>
+          <button class="btn btn-primary" id="insertTableBtn">
+            Insert Table
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confluence Macro Modal -->
+    <div class="modal-overlay" id="macroModal">
+      <div class="modal" style="max-width: 700px">
+        <div class="modal-header">
+          <h2>Insert Confluence Macro</h2>
+          <p
+            style="
+              font-size: 13px;
+              color: var(--neutral-medium);
+              margin-top: 8px;
+            "
+          >
+            Select a macro or enter custom code
+          </p>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Popular Macros</label>
+            <div class="macro-grid" id="macroGrid"></div>
+          </div>
+
+          <div class="form-group" id="macroParameters" style="display: none">
+            <label id="macroParamLabel">Macro Parameters</label>
+            <div id="macroParamFields"></div>
+          </div>
+
+          <div class="form-group">
+            <label
+              >Or Enter Custom Macro Code
+              <span
+                style="
+                  font-size: 11px;
+                  font-weight: 400;
+                  color: var(--neutral-medium);
+                "
+                >(Advanced)</span
+              ></label
+            >
+            <textarea
+              id="customMacroCode"
+              placeholder="Paste Confluence macro code here..."
+              style="font-family: monospace; min-height: 120px"
+            ></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="closeMacroModalBtn">
+            Cancel
+          </button>
+          <button class="btn btn-primary" id="insertMacroBtn">
+            Insert Macro
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+      <div class="notification-icon" id="notificationIcon">&#10003;</div>
+      <div id="notificationText">Success!</div>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+
+        // ============================================================================
+        // CONFIGURATION
+        // ============================================================================
+
+        const DEFAULT_COLORS = [
+          "#6B2976",
+          "#7CB342",
+          "#FF6B6B",
+          "#4ECDC4",
+          "#FFA500",
+          "#9B59B6",
+          "#3498db",
+          "#e74c3c",
+        ];
+        const COMMON_EMOJIS = [
+          "&#128218;",
+          "&#127968;",
+          "&#9889;",
+          "&#128203;",
+          "&#127919;",
+          "&#128172;",
+          "&#9989;",
+          "&#9881;",
+          "&#128202;",
+          "&#128276;",
+          "&#128640;",
+          "&#128161;",
+          "&#127891;",
+          "&#128295;",
+          "&#128200;",
+          "&#127942;",
+          "&#11088;",
+          "&#127912;",
+          "&#128269;",
+          "&#128188;",
+        ];
+
+        // Macro templates
+        const MACRO_TEMPLATES = {
+          info: {
+            name: "Info",
+            icon: "ℹ️",
+            iconBg: "#E3FCEF",
+            params: [
+              {
+                name: "title",
+                label: "Title",
+                type: "text",
+                default: "Information",
+              },
+            ],
+            template: (p) =>
+              `<ac:structured-macro ac:name="info"><ac:parameter ac:name="title">${p.title || "Information"}</ac:parameter><ac:rich-text-body><p>Add your information here</p></ac:rich-text-body></ac:structured-macro>`,
+          },
+          warning: {
+            name: "Warning",
+            icon: "⚠️",
+            iconBg: "#FFF4E6",
+            params: [
+              {
+                name: "title",
+                label: "Title",
+                type: "text",
+                default: "Warning",
+              },
+            ],
+            template: (p) =>
+              `<ac:structured-macro ac:name="warning"><ac:parameter ac:name="title">${p.title || "Warning"}</ac:parameter><ac:rich-text-body><p>Add your warning here</p></ac:rich-text-body></ac:structured-macro>`,
+          },
+          tip: {
+            name: "Tip",
+            icon: "💡",
+            iconBg: "#E6F7FF",
+            params: [
+              { name: "title", label: "Title", type: "text", default: "Tip" },
+            ],
+            template: (p) =>
+              `<ac:structured-macro ac:name="tip"><ac:parameter ac:name="title">${p.title || "Tip"}</ac:parameter><ac:rich-text-body><p>Add your tip here</p></ac:rich-text-body></ac:structured-macro>`,
+          },
+          note: {
+            name: "Note",
+            icon: "📝",
+            iconBg: "#FFF0F6",
+            params: [
+              { name: "title", label: "Title", type: "text", default: "Note" },
+            ],
+            template: (p) =>
+              `<ac:structured-macro ac:name="note"><ac:parameter ac:name="title">${p.title || "Note"}</ac:parameter><ac:rich-text-body><p>Add your note here</p></ac:rich-text-body></ac:structured-macro>`,
+          },
+          expand: {
+            name: "Expand",
+            icon: "📂",
+            iconBg: "#F0F0F0",
+            params: [
+              {
+                name: "title",
+                label: "Expand Title",
+                type: "text",
+                default: "Click to expand...",
+              },
+            ],
+            template: (p) =>
+              `<ac:structured-macro ac:name="expand"><ac:parameter ac:name="title">${p.title || "Click to expand..."}</ac:parameter><ac:rich-text-body><p>Hidden content goes here</p></ac:rich-text-body></ac:structured-macro>`,
+          },
+          status: {
+            name: "Status",
+            icon: "✓",
+            iconBg: "#E6F4FF",
+            params: [
+              {
+                name: "title",
+                label: "Status Text",
+                type: "text",
+                default: "IN PROGRESS",
+              },
+              {
+                name: "colour",
+                label: "Color",
+                type: "select",
+                options: ["Grey", "Red", "Yellow", "Green", "Blue"],
+                default: "Blue",
+              },
+            ],
+            template: (p) =>
+              `<ac:structured-macro ac:name="status"><ac:parameter ac:name="colour">${p.colour || "Blue"}</ac:parameter><ac:parameter ac:name="title">${p.title || "IN PROGRESS"}</ac:parameter></ac:structured-macro>`,
+          },
+          toc: {
+            name: "TOC",
+            icon: "📑",
+            iconBg: "#FFF7E6",
+            params: [
+              {
+                name: "maxLevel",
+                label: "Max Heading Level",
+                type: "number",
+                default: "3",
+              },
+            ],
+            template: (p) =>
+              `<ac:structured-macro ac:name="toc"><ac:parameter ac:name="maxLevel">${p.maxLevel || "3"}</ac:parameter></ac:structured-macro>`,
+          },
+          code: {
+            name: "Code",
+            icon: "💻",
+            iconBg: "#F6F6F6",
+            params: [
+              {
+                name: "language",
+                label: "Language",
+                type: "select",
+                options: [
+                  "none",
+                  "java",
+                  "javascript",
+                  "python",
+                  "sql",
+                  "xml",
+                  "html",
+                  "css",
+                  "bash",
+                ],
+                default: "none",
+              },
+              { name: "title", label: "Title", type: "text", default: "" },
+            ],
+            template: (p) =>
+              `<ac:structured-macro ac:name="code"><ac:parameter ac:name="language">${p.language || "none"}</ac:parameter>${p.title ? `<ac:parameter ac:name="title">${p.title}</ac:parameter>` : ""}<ac:plain-text-body><![CDATA[// Your code here]]></ac:plain-text-body></ac:structured-macro>`,
+          },
+          panel: {
+            name: "Panel",
+            icon: "📋",
+            iconBg: "#F0F5FF",
+            params: [
+              {
+                name: "title",
+                label: "Panel Title",
+                type: "text",
+                default: "",
+              },
+              {
+                name: "borderColor",
+                label: "Border Color",
+                type: "color",
+                default: "#ccc",
+              },
+            ],
+            template: (p) =>
+              `<ac:structured-macro ac:name="panel"><ac:parameter ac:name="borderStyle">solid</ac:parameter><ac:parameter ac:name="borderColor">${p.borderColor || "#ccc"}</ac:parameter>${p.title ? `<ac:parameter ac:name="title">${p.title}</ac:parameter>` : ""}<ac:rich-text-body><p>Panel content here</p></ac:rich-text-body></ac:structured-macro>`,
+          },
+          jira: {
+            name: "Jira",
+            icon: "🎫",
+            iconBg: "#DEEBFF",
+            params: [
+              {
+                name: "key",
+                label: "Issue Key (e.g., PROJ-123)",
+                type: "text",
+                default: "PROJ-123",
+              },
+            ],
+            template: (p) =>
+              `<ac:structured-macro ac:name="jira"><ac:parameter ac:name="key">${p.key || "PROJ-123"}</ac:parameter></ac:structured-macro>`,
+          },
+        };
+
+        // ============================================================================
+        // STATE
+        // ============================================================================
+
+        let accordionData = [];
+        let templates = [];
+        let history = [];
+        let historyIndex = -1;
+        let currentEditorIndex = null;
+        let selectedMacroType = null;
+
+        // ============================================================================
+        // INITIALIZATION
+        // ============================================================================
+
+        function init() {
+          loadTemplates();
+          loadSavedWork();
+          renderTemplates();
+          renderMacroGrid();
+          updateHistoryUI();
+          bindEvents();
+        }
+
+        function bindEvents() {
+          // Template search
+          document
+            .getElementById("templateSearch")
+            .addEventListener("input", renderTemplates);
+
+          // Buttons
+          document
+            .getElementById("saveTemplateBtn")
+            .addEventListener("click", saveAsTemplate);
+          document.getElementById("undoBtn").addEventListener("click", undo);
+          document.getElementById("redoBtn").addEventListener("click", redo);
+          document
+            .getElementById("resetBtn")
+            .addEventListener("click", resetAll);
+          document
+            .getElementById("generateSectionsBtn")
+            .addEventListener("click", generateSections);
+          document
+            .getElementById("generateCodeBtn")
+            .addEventListener("click", generateCode);
+          document
+            .getElementById("copyCodeBtn")
+            .addEventListener("click", copyCode);
+
+          // Tabs
+          document.querySelectorAll(".tab").forEach((tab) => {
+            tab.addEventListener("click", () => switchTab(tab.dataset.tab));
+          });
+
+          // Modals
+          document
+            .getElementById("closeTableModalBtn")
+            .addEventListener("click", closeTableModal);
+          document
+            .getElementById("insertTableBtn")
+            .addEventListener("click", insertTable);
+          document
+            .getElementById("closeMacroModalBtn")
+            .addEventListener("click", closeMacroModal);
+          document
+            .getElementById("insertMacroBtn")
+            .addEventListener("click", insertMacro);
+
+          // Modal overlay clicks
+          document
+            .getElementById("tableModal")
+            .addEventListener("click", (e) => {
+              if (e.target.id === "tableModal") closeTableModal();
+            });
+          document
+            .getElementById("macroModal")
+            .addEventListener("click", (e) => {
+              if (e.target.id === "macroModal") closeMacroModal();
+            });
+
+          // Keyboard shortcuts
+          document.addEventListener("keydown", handleKeyboard);
+
+          // Delegated events
+          document.addEventListener("click", handleClicks);
+          document.addEventListener("input", handleInputs);
+        }
+
+        function handleKeyboard(e) {
+          if (e.key === "Escape") {
+            closeTableModal();
+            closeMacroModal();
+          }
+          if (e.ctrlKey || e.metaKey) {
+            if (e.key === "z") {
+              e.preventDefault();
+              undo();
+            }
+            if (e.key === "y") {
+              e.preventDefault();
+              redo();
+            }
+          }
+        }
+
+        function handleClicks(e) {
+          const target = e.target;
+
+          // Template cards
+          const templateCard = target.closest(".template-card");
+          if (templateCard && !target.classList.contains("template-delete")) {
+            loadTemplate(parseInt(templateCard.dataset.templateId));
+            return;
+          }
+
+          // Template delete
+          if (target.classList.contains("template-delete")) {
+            e.stopPropagation();
+            deleteTemplate(parseInt(target.dataset.templateId));
+            return;
+          }
+
+          // Emoji picker toggle
+          if (target.classList.contains("emoji-picker-btn")) {
+            toggleEmojiPicker(parseInt(target.dataset.sectionIndex));
+            return;
+          }
+
+          // Emoji selection
+          if (target.classList.contains("emoji-item")) {
+            insertEmoji(
+              parseInt(target.dataset.sectionIndex),
+              target.dataset.emoji,
+            );
+            return;
+          }
+
+          // Table modal button
+          if (target.classList.contains("table-modal-btn")) {
+            e.preventDefault();
+            openTableModal(parseInt(target.dataset.sectionIndex));
+            return;
+          }
+
+          // Macro modal button
+          if (target.classList.contains("macro-modal-btn")) {
+            e.preventDefault();
+            openMacroModal(parseInt(target.dataset.sectionIndex));
+            return;
+          }
+
+          // Macro card selection
+          const macroCard = target.closest(".macro-card");
+          if (macroCard && macroCard.dataset.macroType) {
+            selectMacro(macroCard.dataset.macroType);
+            return;
+          }
+
+          // Editor toolbar buttons
+          if (
+            target.classList.contains("editor-btn") &&
+            target.dataset.command
+          ) {
+            e.preventDefault();
+            handleEditorCommand(target);
+            return;
+          }
+
+          // Section delete
+          if (target.classList.contains("section-delete-btn")) {
+            deleteSection(parseInt(target.dataset.sectionIndex));
+            return;
+          }
+        }
+
+        function handleInputs(e) {
+          const target = e.target;
+
+          // Section title
+          if (target.classList.contains("section-title-input")) {
+            const index = parseInt(target.dataset.sectionIndex);
+            accordionData[index].title = target.value;
+            updatePreview();
+            saveWork();
+          }
+
+          // Section color
+          if (target.classList.contains("section-color-input")) {
+            const index = parseInt(target.dataset.sectionIndex);
+            accordionData[index].color = target.value;
+            updateSectionNumber(index);
+            updatePreview();
+            saveWork();
+          }
+
+          // Editor content
+          if (target.classList.contains("editor-content")) {
+            const index = parseInt(target.dataset.sectionIndex);
+            accordionData[index].content = target.innerHTML;
+            updatePreview();
+            saveWork();
+          }
+        }
+
+        function handleEditorCommand(button) {
+          const command = button.dataset.command;
+          const value = button.dataset.value || null;
+          const editor = button
+            .closest(".editor-container")
+            .querySelector(".editor-content");
+
+          editor.focus();
+
+          if (command === "createLink") {
+            const url = prompt("Enter URL:");
+            if (url) document.execCommand(command, false, url);
+          } else if (command === "insertImage") {
+            const url = prompt("Enter image URL:");
+            if (url) document.execCommand(command, false, url);
+          } else if (command === "highlight") {
+            const html =
+              '<div class="highlight-box"><strong>Important:</strong><p>Add your important information here</p></div>';
+            document.execCommand("insertHTML", false, html);
+          } else {
+            document.execCommand(command, false, value);
+          }
+
+          // Update data
+          const index = parseInt(editor.dataset.sectionIndex);
+          accordionData[index].content = editor.innerHTML;
+          updatePreview();
+          saveWork();
+        }
+
+        // ============================================================================
+        // TEMPLATES
+        // ============================================================================
+
+        function loadTemplates() {
+          const saved = localStorage.getItem("accordionTemplates");
+          if (saved) {
+            templates = JSON.parse(saved);
+          } else {
+            templates = [
+              {
+                id: Date.now(),
+                name: "Default Template",
+                sections: 6,
+                data: [
+                  {
+                    title: "📚 Program Overview",
+                    color: "#6B2976",
+                    content:
+                      "<h3>Key Points</h3><p>Add your content here...</p>",
+                  },
+                  {
+                    title: "🏠 Guidelines",
+                    color: "#7CB342",
+                    content:
+                      "<h3>Essential Information</h3><p>Add your content here...</p>",
+                  },
+                  {
+                    title: "⚡ Urgent Cases",
+                    color: "#FF6B6B",
+                    content:
+                      "<h3>Priority Details</h3><p>Add your content here...</p>",
+                  },
+                  {
+                    title: "📋 Documentation",
+                    color: "#4ECDC4",
+                    content:
+                      "<h3>Required Documents</h3><p>Add your content here...</p>",
+                  },
+                  {
+                    title: "🎯 Framework",
+                    color: "#FFA500",
+                    content:
+                      "<h3>Assessment Criteria</h3><p>Add your content here...</p>",
+                  },
+                  {
+                    title: "💬 Communication",
+                    color: "#9B59B6",
+                    content:
+                      "<h3>Contact Guidelines</h3><p>Add your content here...</p>",
+                  },
+                ],
+              },
+            ];
+            saveTemplates();
+          }
+        }
+
+        function saveTemplates() {
+          localStorage.setItem("accordionTemplates", JSON.stringify(templates));
+        }
+
+        function renderTemplates() {
+          const search = document
+            .getElementById("templateSearch")
+            .value.toLowerCase();
+          const filtered = templates.filter((t) =>
+            t.name.toLowerCase().includes(search),
+          );
+          const grid = document.getElementById("templatesGrid");
+
+          if (filtered.length === 0) {
+            grid.innerHTML =
+              '<div class="empty-state"><p>No templates found</p></div>';
+            return;
+          }
+
+          grid.innerHTML = filtered
+            .map(
+              (t) => `
+            <div class="template-card" data-template-id="${t.id}">
+                <button class="template-delete" data-template-id="${t.id}">&times;</button>
+                <h3>${escapeHtml(t.name)}</h3>
+                <div class="template-card-meta">${t.sections} sections</div>
+                <div class="template-card-preview">
+                    ${t.data
+                      .slice(0, 6)
+                      .map(
+                        (item) =>
+                          `<div class="template-color-dot" style="background: ${item.color};"></div>`,
+                      )
+                      .join("")}
+                </div>
+            </div>
+        `,
+            )
+            .join("");
+        }
+
+        function loadTemplate(id) {
+          const template = templates.find((t) => t.id === id);
+          if (template) {
+            accordionData = JSON.parse(JSON.stringify(template.data));
+            document.getElementById("sectionCount").value =
+              accordionData.length;
+            renderSections();
+            updatePreview();
+            saveHistory("Loaded template: " + template.name);
+            showNotification("success", `Loaded: ${template.name}`);
+          }
+        }
+
+        function saveAsTemplate() {
+          if (accordionData.length === 0) {
+            showNotification("error", "Create sections first");
+            return;
+          }
+
+          const name = prompt("Template name:");
+          if (name) {
+            templates.push({
+              id: Date.now(),
+              name: name,
+              sections: accordionData.length,
+              data: JSON.parse(JSON.stringify(accordionData)),
+            });
+            saveTemplates();
+            renderTemplates();
+            showNotification("success", "Template saved");
+          }
+        }
+
+        function deleteTemplate(id) {
+          if (confirm("Delete this template?")) {
+            templates = templates.filter((t) => t.id !== id);
+            saveTemplates();
+            renderTemplates();
+            showNotification("success", "Template deleted");
+          }
+        }
+
+        // ============================================================================
+        // SECTIONS
+        // ============================================================================
+
+        function loadSavedWork() {
+          const saved = localStorage.getItem("currentAccordionWork");
+          if (saved) {
+            accordionData = JSON.parse(saved);
+            if (accordionData.length > 0) {
+              document.getElementById("sectionCount").value =
+                accordionData.length;
+              renderSections();
+              updatePreview();
+            }
+          }
+        }
+
+        function saveWork() {
+          localStorage.setItem(
+            "currentAccordionWork",
+            JSON.stringify(accordionData),
+          );
+        }
+
+        function generateSections() {
+          const count =
+            parseInt(document.getElementById("sectionCount").value) || 3;
+
+          if (count > accordionData.length) {
+            for (let i = accordionData.length; i < count; i++) {
+              accordionData.push({
+                title: "",
+                color: DEFAULT_COLORS[i % DEFAULT_COLORS.length],
+                content: "",
+              });
+            }
+          } else {
+            accordionData = accordionData.slice(0, count);
+          }
+
+          renderSections();
+          updatePreview();
+          saveHistory("Generated " + count + " sections");
+          saveWork();
+        }
+
+        function renderSections() {
+          const container = document.getElementById("sectionsContainer");
+
+          if (accordionData.length === 0) {
+            container.innerHTML =
+              '<div class="empty-state"><p>Set section count and click Generate</p></div>';
+            return;
+          }
+
+          container.innerHTML = accordionData
+            .map(
+              (section, index) => `
+            <div class="section-item" data-section-index="${index}">
+                <div class="section-header">
+                    <div class="section-number" id="section-number-${index}" style="background: ${section.color};">${index + 1}</div>
+                    <input type="text"
+                           class="section-title-input"
+                           data-section-index="${index}"
+                           placeholder="Section title (e.g., 📚 Program Overview)"
+                           value="${escapeHtml(section.title)}">
+                    <div class="section-controls">
+                        <input type="color"
+                               class="section-color-input"
+                               data-section-index="${index}"
+                               value="${section.color}"
+                               title="Change color">
+                        <button class="btn btn-sm emoji-picker-btn" data-section-index="${index}">😀</button>
+                        <button class="section-delete-btn" data-section-index="${index}" title="Delete section">&times;</button>
+                    </div>
+                </div>
+
+                <div id="emoji-picker-${index}" class="emoji-grid" style="display: none;">
+                    ${COMMON_EMOJIS.map((emoji) => `<div class="emoji-item" data-section-index="${index}" data-emoji="${emoji}">${emoji}</div>`).join("")}
+                </div>
+
+                <div class="form-group">
+                    <label>Content</label>
+                    <div class="editor-container">
+                        <div class="editor-toolbar">
+                            <button class="editor-btn" data-command="bold"><strong>B</strong></button>
+                            <button class="editor-btn" data-command="italic"><em>I</em></button>
+                            <button class="editor-btn" data-command="underline"><u>U</u></button>
+                            <div class="toolbar-separator"></div>
+                            <button class="editor-btn" data-command="formatBlock" data-value="h3">H3</button>
+                            <button class="editor-btn" data-command="formatBlock" data-value="p">P</button>
+                            <div class="toolbar-separator"></div>
+                            <button class="editor-btn" data-command="insertUnorderedList">• List</button>
+                            <button class="editor-btn" data-command="insertOrderedList">1. List</button>
+                            <div class="toolbar-separator"></div>
+                            <button class="editor-btn" data-command="highlight">💡 Highlight</button>
+                            <button class="editor-btn" data-command="createLink">🔗 Link</button>
+                            <div class="toolbar-separator"></div>
+                            <button class="editor-btn table-modal-btn" data-section-index="${index}">📊 Table</button>
+                            <button class="editor-btn macro-modal-btn" data-section-index="${index}">🔌 Macro</button>
+                        </div>
+                        <div class="editor-content"
+                             contenteditable="true"
+                             data-section-index="${index}"
+                             data-placeholder="Start typing your content...">${section.content}</div>
+                    </div>
+                </div>
+            </div>
+        `,
+            )
+            .join("");
+        }
+
+        function updateSectionNumber(index) {
+          const el = document.getElementById(`section-number-${index}`);
+          if (el) el.style.background = accordionData[index].color;
+        }
+
+        function deleteSection(index) {
+          if (accordionData.length <= 1) {
+            showNotification("warning", "Must have at least one section");
+            return;
+          }
+
+          accordionData.splice(index, 1);
+          document.getElementById("sectionCount").value = accordionData.length;
+          renderSections();
+          updatePreview();
+          saveHistory("Deleted section");
+          saveWork();
+        }
+
+        function toggleEmojiPicker(index) {
+          const picker = document.getElementById(`emoji-picker-${index}`);
+          picker.style.display =
+            picker.style.display === "none" ? "grid" : "none";
+        }
+
+        function insertEmoji(index, emoji) {
+          const currentTitle = accordionData[index].title;
+          const cleanTitle = currentTitle.replace(
+            /^[\u{1F300}-\u{1F9FF}]\s*/u,
+            "",
+          );
+          accordionData[index].title = emoji + " " + cleanTitle;
+
+          const input = document.querySelector(
+            `.section-title-input[data-section-index="${index}"]`,
+          );
+          if (input) input.value = accordionData[index].title;
+
+          document.getElementById(`emoji-picker-${index}`).style.display =
+            "none";
+          updatePreview();
+          saveWork();
+        }
+
+        // ============================================================================
+        // HISTORY
+        // ============================================================================
+
+        function saveHistory(action) {
+          history = history.slice(0, historyIndex + 1);
+          history.push({
+            action,
+            data: JSON.parse(JSON.stringify(accordionData)),
+          });
+          historyIndex = history.length - 1;
+
+          if (history.length > 50) {
+            history.shift();
+            historyIndex--;
+          }
+
+          updateHistoryUI();
+        }
+
+        function undo() {
+          if (historyIndex > 0) {
+            historyIndex--;
+            accordionData = JSON.parse(
+              JSON.stringify(history[historyIndex].data),
+            );
+            document.getElementById("sectionCount").value =
+              accordionData.length;
+            renderSections();
+            updatePreview();
+            updateHistoryUI();
+          }
+        }
+
+        function redo() {
+          if (historyIndex < history.length - 1) {
+            historyIndex++;
+            accordionData = JSON.parse(
+              JSON.stringify(history[historyIndex].data),
+            );
+            document.getElementById("sectionCount").value =
+              accordionData.length;
+            renderSections();
+            updatePreview();
+            updateHistoryUI();
+          }
+        }
+
+        function updateHistoryUI() {
+          document.getElementById("undoBtn").disabled = historyIndex <= 0;
+          document.getElementById("redoBtn").disabled =
+            historyIndex >= history.length - 1;
+          document.getElementById("historyInfo").textContent =
+            history.length > 0 && historyIndex >= 0
+              ? history[historyIndex].action
+              : "No changes yet";
+        }
+
+        // ============================================================================
+        // PREVIEW & CODE
+        // ============================================================================
+
+        function updatePreview() {
+          const container = document.getElementById("previewContainer");
+
+          if (accordionData.length === 0) {
+            container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">&#128203;</div><p>Generate sections to see preview</p></div>`;
+            return;
+          }
+
+          container.innerHTML = `
+            <div class="colorful-accordion">
+                ${accordionData
+                  .map(
+                    (item, index) => `
+                    <div class="accordion-section">
+                        <input type="checkbox" id="preview-section${index}" class="acc-checkbox">
+                        <label for="preview-section${index}" class="acc-header" style="background: ${item.color};">
+                            <span>${escapeHtml(item.title) || "Untitled Section"}</span>
+                            <span class="acc-icon">▼</span>
+                        </label>
+                        <div class="acc-content-wrapper" style="border-color: ${item.color};">
+                            <div class="acc-content">${item.content || "<p>No content yet</p>"}</div>
+                        </div>
+                    </div>
+                `,
+                  )
+                  .join("")}
+            </div>
+        `;
+        }
+
+        function processContentForOutput(content) {
+          const temp = document.createElement("div");
+          temp.innerHTML = content;
+
+          temp.querySelectorAll(".confluence-macro").forEach((div) => {
+            const macroCode = div.getAttribute("data-macro-code");
+            if (macroCode) {
+              div.parentNode.replaceChild(
+                document.createTextNode(macroCode),
+                div,
+              );
+            }
+          });
+
+          return temp.innerHTML;
+        }
+
+        function generateCode() {
+          if (accordionData.length === 0) {
+            showNotification("error", "Create sections first");
+            return;
+          }
+
+          const code = `<style>
+.colorful-accordion {
+    max-width: 900px;
+    margin: 20px 0;
+}
+
+.accordion-section {
+    margin-bottom: 10px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+${accordionData.map((item, i) => `.accordion-section:nth-child(${i + 1}) .acc-header { background: ${item.color}; }`).join("\n")}
+
+.acc-checkbox { display: none; }
+
+.acc-header {
+    color: white;
+    padding: 18px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.acc-header:hover {
+    filter: brightness(1.1);
+    padding-left: 25px;
+}
+
+.acc-icon {
+    font-size: 20px;
+    transition: transform 0.3s ease;
+    font-weight: bold;
+}
+
+.acc-checkbox:checked + .acc-header .acc-icon {
+    transform: rotate(180deg);
+}
+
+.acc-content-wrapper {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.4s ease;
+    background: white;
+}
+
+.acc-checkbox:checked ~ .acc-content-wrapper {
+    max-height: 2000px;
+    padding: 20px;
+    border-left: 4px solid;
+}
+
+${accordionData.map((item, i) => `.accordion-section:nth-child(${i + 1}) .acc-checkbox:checked ~ .acc-content-wrapper { border-color: ${item.color}; }`).join("\n")}
+
+.acc-content {
+    color: #333;
+    line-height: 1.6;
+}
+
+.acc-content h3 {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 18px;
+}
+
+.acc-content h3:first-child { margin-top: 0; }
+
+.acc-content p { margin-bottom: 12px; }
+
+.acc-content ul, .acc-content ol {
+    margin-left: 20px;
+    margin-bottom: 12px;
+}
+
+.acc-content li { margin-bottom: 6px; }
+
+.acc-content strong { color: #6B2976; }
+
+.highlight-box {
+    background: #f8f9fa;
+    border-left: 4px solid #7CB342;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 4px;
+}
+
+.highlight-box strong { color: #7CB342; }
+
+.acc-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    border: 1px solid #ddd;
+}
+
+.acc-content table th {
+    background: #f8f9fa;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    border: 1px solid #ddd;
+}
+
+.acc-content table td {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+}
+
+.acc-content table tr:nth-child(even) { background: #f8f9fa; }
+.acc-content table tr:hover { background: #e9ecef; }
+</style>
+
+<div class="colorful-accordion">
+${accordionData
+  .map(
+    (item, index) => `
+<!-- Section ${index + 1}: ${item.title || "Untitled"} -->
+<div class="accordion-section">
+    <input type="checkbox" id="section${index + 1}" class="acc-checkbox">
+    <label for="section${index + 1}" class="acc-header">
+        <span>${escapeHtml(item.title)}</span>
+        <span class="acc-icon">▼</span>
+    </label>
+    <div class="acc-content-wrapper">
+        <div class="acc-content">
+${processContentForOutput(item.content)}
+        </div>
+    </div>
+</div>`,
+  )
+  .join("\n")}
+</div>`;
+
+          document.getElementById("codeOutput").textContent = code;
+          switchTab("code");
+          showNotification("success", "Code generated");
+        }
+
+        function copyCode() {
+          const code = document.getElementById("codeOutput").textContent;
+
+          if (!code || code.includes('Click "Generate Code"')) {
+            showNotification("error", "Generate code first");
+            return;
+          }
+
+          navigator.clipboard
+            .writeText(code)
+            .then(() => {
+              showNotification("success", "Code copied to clipboard");
+            })
+            .catch(() => {
+              showNotification("error", "Failed to copy code");
+            });
+        }
+
+        function switchTab(tab) {
+          document.querySelectorAll(".tab").forEach((t) => {
+            t.classList.toggle("active", t.dataset.tab === tab);
+          });
+          document.getElementById("previewView").style.display =
+            tab === "preview" ? "block" : "none";
+          document.getElementById("codeView").style.display =
+            tab === "code" ? "block" : "none";
+        }
+
+        // ============================================================================
+        // TABLE MODAL
+        // ============================================================================
+
+        function openTableModal(index) {
+          currentEditorIndex = index;
+          document.getElementById("tableModal").classList.add("show");
+          document.body.classList.add("modal-open");
+        }
+
+        function closeTableModal() {
+          document.getElementById("tableModal").classList.remove("show");
+          document.body.classList.remove("modal-open");
+          currentEditorIndex = null;
+        }
+
+        function insertTable() {
+          const rows =
+            parseInt(document.getElementById("tableRows").value) || 3;
+          const cols =
+            parseInt(document.getElementById("tableCols").value) || 3;
+          const hasHeader = document.getElementById("tableHeader").checked;
+
+          let html = "<table><tbody>";
+          for (let i = 0; i < rows; i++) {
+            html += "<tr>";
+            const tag = i === 0 && hasHeader ? "th" : "td";
+            for (let j = 0; j < cols; j++) {
+              const content =
+                i === 0 && hasHeader
+                  ? `Header ${j + 1}`
+                  : `Cell ${i + 1},${j + 1}`;
+              html += `<${tag}>${content}</${tag}>`;
+            }
+            html += "</tr>";
+          }
+          html += "</tbody></table>";
+
+          if (currentEditorIndex !== null) {
+            const editor = document.querySelector(
+              `.editor-content[data-section-index="${currentEditorIndex}"]`,
+            );
+            if (editor) {
+              editor.focus();
+              document.execCommand("insertHTML", false, html);
+              accordionData[currentEditorIndex].content = editor.innerHTML;
+              updatePreview();
+              saveWork();
+            }
+          }
+
+          closeTableModal();
+          showNotification("success", "Table inserted");
+        }
+
+        // ============================================================================
+        // MACRO MODAL
+        // ============================================================================
+
+        function renderMacroGrid() {
+          const grid = document.getElementById("macroGrid");
+          grid.innerHTML = Object.entries(MACRO_TEMPLATES)
+            .map(
+              ([type, macro]) => `
+            <button class="macro-card" data-macro-type="${type}">
+                <div class="macro-icon" style="background: ${macro.iconBg};">${macro.icon}</div>
+                <div class="macro-name">${macro.name}</div>
+            </button>
+        `,
+            )
+            .join("");
+        }
+
+        function openMacroModal(index) {
+          currentEditorIndex = index;
+          selectedMacroType = null;
+          document.getElementById("customMacroCode").value = "";
+          document.getElementById("macroParameters").style.display = "none";
+          document
+            .querySelectorAll(".macro-card")
+            .forEach((c) => c.classList.remove("selected"));
+          document.getElementById("macroModal").classList.add("show");
+          document.body.classList.add("modal-open");
+        }
+
+        function closeMacroModal() {
+          document.getElementById("macroModal").classList.remove("show");
+          document.body.classList.remove("modal-open");
+          currentEditorIndex = null;
+          selectedMacroType = null;
+        }
+
+        function selectMacro(type) {
+          selectedMacroType = type;
+          const macro = MACRO_TEMPLATES[type];
+
+          document.querySelectorAll(".macro-card").forEach((c) => {
+            c.classList.toggle("selected", c.dataset.macroType === type);
+          });
+
+          const paramContainer = document.getElementById("macroParameters");
+          const paramFields = document.getElementById("macroParamFields");
+
+          if (macro.params && macro.params.length > 0) {
+            document.getElementById("macroParamLabel").textContent =
+              `${macro.name} Settings`;
+            paramFields.innerHTML = macro.params
+              .map((param, i) => {
+                if (param.type === "select") {
+                  return `<div class="macro-param-field">
+                        <label>${param.label}</label>
+                        <select id="macroParam${i}">
+                            ${param.options.map((opt) => `<option value="${opt}" ${opt === param.default ? "selected" : ""}>${opt}</option>`).join("")}
+                        </select>
+                    </div>`;
+                } else if (param.type === "number") {
+                  return `<div class="macro-param-field">
+                        <label>${param.label}</label>
+                        <input type="number" id="macroParam${i}" value="${param.default}" min="1" max="10">
+                    </div>`;
+                } else if (param.type === "color") {
+                  return `<div class="macro-param-field">
+                        <label>${param.label}</label>
+                        <input type="color" id="macroParam${i}" value="${param.default}">
+                    </div>`;
+                }
+                return `<div class="macro-param-field">
+                    <label>${param.label}</label>
+                    <input type="text" id="macroParam${i}" value="${param.default}" placeholder="${param.default}">
+                </div>`;
+              })
+              .join("");
+            paramContainer.style.display = "block";
+          } else {
+            paramContainer.style.display = "none";
+          }
+        }
+
+        function insertMacro() {
+          let macroCode = document
+            .getElementById("customMacroCode")
+            .value.trim();
+
+          if (!macroCode && selectedMacroType) {
+            const macro = MACRO_TEMPLATES[selectedMacroType];
+            const params = {};
+            if (macro.params) {
+              macro.params.forEach((param, i) => {
+                params[param.name] = document.getElementById(
+                  `macroParam${i}`,
+                ).value;
+              });
+            }
+            macroCode = macro.template(params);
+          }
+
+          if (!macroCode) {
+            showNotification("error", "Select a macro or enter custom code");
+            return;
+          }
+
+          const displayHtml = `<div class="confluence-macro" contenteditable="false" data-macro-code="${escapeHtml(macroCode)}">
+            <div style="font-weight: 600; color: #0052cc; margin-bottom: 8px; font-size: 11px;">🔌 CONFLUENCE MACRO</div>
+            ${escapeHtml(macroCode)}
+            <div style="font-size: 10px; color: #6b778c; margin-top: 8px; font-style: italic;">This macro will render in Confluence</div>
+        </div>`;
+
+          if (currentEditorIndex !== null) {
+            const editor = document.querySelector(
+              `.editor-content[data-section-index="${currentEditorIndex}"]`,
+            );
+            if (editor) {
+              editor.focus();
+              document.execCommand("insertHTML", false, displayHtml);
+              accordionData[currentEditorIndex].content = editor.innerHTML;
+              updatePreview();
+              saveWork();
+            }
+          }
+
+          closeMacroModal();
+          showNotification("success", "Macro inserted");
+        }
+
+        // ============================================================================
+        // UTILITIES
+        // ============================================================================
+
+        function showNotification(type, message) {
+          const notification = document.getElementById("notification");
+          const icon = document.getElementById("notificationIcon");
+          const text = document.getElementById("notificationText");
+
+          notification.className = `notification ${type}`;
+          icon.textContent =
+            type === "success" ? "✓" : type === "error" ? "✕" : "⚠";
+          text.textContent = message;
+          notification.classList.add("show");
+
+          setTimeout(() => notification.classList.remove("show"), 3000);
+        }
+
+        function resetAll() {
+          if (
+            confirm(
+              "Reset everything? This will clear all sections but keep your templates.",
+            )
+          ) {
+            accordionData = [];
+            history = [];
+            historyIndex = -1;
+            document.getElementById("sectionCount").value = 3;
+            renderSections();
+            updatePreview();
+            document.getElementById("codeOutput").textContent =
+              '// Click "Generate Code" to see the HTML output';
+            localStorage.removeItem("currentAccordionWork");
+            updateHistoryUI();
+            showNotification("success", "Reset complete");
+          }
+        }
+
+        function escapeHtml(text) {
+          if (!text) return "";
+          const div = document.createElement("div");
+          div.textContent = text;
+          return div.innerHTML;
+        }
+
+        // Initialize on load
+        window.addEventListener("load", init);
+      })();
+    </script>
+  </body>
+</html>
