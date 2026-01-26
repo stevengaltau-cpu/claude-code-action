@@ -222,6 +222,10 @@
         background: var(--danger-color);
         color: white;
       }
+      .btn-secondary {
+        background: var(--neutral-lighter);
+        color: var(--neutral-dark);
+      }
       .btn-sm {
         padding: 6px 12px;
         font-size: 12px;
@@ -302,6 +306,211 @@
         align-items: center;
         justify-content: center;
         font-weight: 700;
+      }
+
+      /* Editor Styles */
+      .editor-container {
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .editor-container:focus-within {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0, 172, 193, 0.1);
+      }
+
+      .editor-toolbar {
+        background: var(--bg-light);
+        border-bottom: 1px solid var(--border-color);
+        padding: var(--spacing-sm);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+
+      .editor-btn {
+        background: white;
+        border: 1px solid var(--border-color);
+        padding: 6px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 500;
+        transition: var(--transition);
+      }
+
+      .editor-btn:hover {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+      }
+
+      .toolbar-separator {
+        width: 1px;
+        background: var(--border-color);
+        margin: 0 4px;
+      }
+
+      .editor-content {
+        min-height: 150px;
+        padding: var(--spacing-md);
+        outline: none;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .editor-content:empty::before {
+        content: attr(data-placeholder);
+        color: var(--neutral-light);
+      }
+
+      /* Confluence Macros in Editor */
+      .editor-content .confluence-macro {
+        background: #f0f5ff;
+        border: 2px dashed #0052cc;
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 12px;
+        white-space: pre-wrap;
+        cursor: default;
+      }
+
+      /* Modal Styles */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        padding: var(--spacing-md);
+      }
+
+      .modal-overlay.show {
+        display: flex;
+        overflow: auto;
+      }
+
+      body.modal-open {
+        overflow: hidden;
+      }
+
+      .modal {
+        background: white;
+        border-radius: 12px;
+        padding: var(--spacing-xl);
+        max-width: 500px;
+        width: 90%;
+        box-shadow: var(--shadow-lg);
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+      }
+
+      .modal-header {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .modal-header h2 {
+        font-size: 20px;
+        color: var(--neutral-dark);
+      }
+
+      .modal-body {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .modal-footer {
+        display: flex;
+        gap: var(--spacing-sm);
+        justify-content: flex-end;
+      }
+
+      /* Macro Grid */
+      .macro-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: var(--spacing-sm);
+        margin-top: var(--spacing-sm);
+      }
+
+      .macro-card {
+        background: white;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: var(--spacing-md);
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-sm);
+        text-align: center;
+      }
+
+      .macro-card:hover {
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+      }
+
+      .macro-card.selected {
+        border-color: var(--primary-color);
+        background: var(--bg-light);
+      }
+
+      .macro-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+      }
+
+      .macro-name {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--neutral-dark);
+      }
+
+      .macro-param-field {
+        margin-bottom: var(--spacing-md);
+      }
+
+      .macro-param-field label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: var(--spacing-xs);
+        color: var(--neutral-dark);
+      }
+
+      .macro-param-field input,
+      .macro-param-field textarea,
+      .macro-param-field select {
+        width: 100%;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border: 2px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 13px;
+        font-family: inherit;
+      }
+
+      .macro-param-field input:focus,
+      .macro-param-field textarea:focus,
+      .macro-param-field select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0, 172, 193, 0.1);
       }
 
       /* Notification */
@@ -480,7 +689,7 @@
       }
 
       /* ============================================ */
-      /* PREVIEW STYLES - ACCORDION (existing)       */
+      /* PREVIEW STYLES - ACCORDION                  */
       /* ============================================ */
       .colorful-accordion {
         max-width: 900px;
@@ -545,50 +754,59 @@
         line-height: 1.6;
       }
 
-      /* Editor Styles */
-      .editor-container {
-        border: 2px solid var(--border-color);
-        border-radius: 8px;
-        overflow: hidden;
+      .acc-content h3 {
+        margin-top: 15px;
+        margin-bottom: 10px;
+        font-size: 18px;
       }
 
-      .editor-toolbar {
-        background: var(--bg-light);
-        border-bottom: 1px solid var(--border-color);
-        padding: var(--spacing-sm);
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
+      .acc-content h3:first-child {
+        margin-top: 0;
       }
 
-      .editor-btn {
-        background: white;
-        border: 1px solid var(--border-color);
-        padding: 6px 10px;
+      .acc-content p {
+        margin-bottom: 12px;
+      }
+
+      .acc-content ul {
+        margin-left: 20px;
+        margin-bottom: 12px;
+      }
+
+      .acc-content li {
+        margin-bottom: 6px;
+      }
+
+      .acc-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        border: 1px solid #ddd;
+      }
+
+      .acc-content table th {
+        background: #f8f9fa;
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        border: 1px solid #ddd;
+      }
+
+      .acc-content table td {
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+      }
+
+      .acc-content table tr:nth-child(even) {
+        background: #f8f9fa;
+      }
+
+      .highlight-box {
+        background: #f8f9fa;
+        border-left: 4px solid #7cb342;
+        padding: 15px;
+        margin: 15px 0;
         border-radius: 4px;
-        cursor: pointer;
-        font-size: 12px;
-        font-weight: 500;
-        transition: var(--transition);
-      }
-
-      .editor-btn:hover {
-        background: var(--primary-color);
-        color: white;
-        border-color: var(--primary-color);
-      }
-
-      .editor-content {
-        min-height: 100px;
-        padding: var(--spacing-md);
-        outline: none;
-        font-size: 13px;
-        line-height: 1.6;
-      }
-
-      .editor-content:empty::before {
-        content: attr(data-placeholder);
-        color: var(--neutral-light);
       }
 
       .empty-state {
@@ -712,6 +930,144 @@
       </div>
     </div>
 
+    <!-- Table Builder Modal -->
+    <div class="modal-overlay" id="tableModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Insert Table</h2>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Number of Rows</label>
+            <input type="number" id="tableRows" min="1" max="20" value="3" />
+          </div>
+          <div class="form-group">
+            <label>Number of Columns</label>
+            <input type="number" id="tableCols" min="1" max="10" value="3" />
+          </div>
+          <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 8px">
+              <input type="checkbox" id="tableHeader" checked />
+              Include header row
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="closeTableModalBtn">
+            Cancel
+          </button>
+          <button class="btn btn-primary" id="insertTableBtn">
+            Insert Table
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confluence Macro Modal -->
+    <div class="modal-overlay" id="macroModal">
+      <div class="modal" style="max-width: 700px">
+        <div class="modal-header">
+          <h2>Insert Confluence Macro</h2>
+          <p
+            style="
+              font-size: 13px;
+              color: var(--neutral-medium);
+              margin-top: 8px;
+            "
+          >
+            Select a common macro or enter custom macro code
+          </p>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Quick Select Popular Macros</label>
+            <div class="macro-grid" id="macroGrid">
+              <button class="macro-card" data-macro-type="info">
+                <div class="macro-icon" style="background: #e3fcef">ℹ️</div>
+                <div class="macro-name">Info</div>
+              </button>
+              <button class="macro-card" data-macro-type="warning">
+                <div class="macro-icon" style="background: #fff4e6">⚠️</div>
+                <div class="macro-name">Warning</div>
+              </button>
+              <button class="macro-card" data-macro-type="tip">
+                <div class="macro-icon" style="background: #e6f7ff">💡</div>
+                <div class="macro-name">Tip</div>
+              </button>
+              <button class="macro-card" data-macro-type="note">
+                <div class="macro-icon" style="background: #fff0f6">📝</div>
+                <div class="macro-name">Note</div>
+              </button>
+              <button class="macro-card" data-macro-type="expand">
+                <div class="macro-icon" style="background: #f0f0f0">📂</div>
+                <div class="macro-name">Expand</div>
+              </button>
+              <button class="macro-card" data-macro-type="status">
+                <div class="macro-icon" style="background: #e6f4ff">✓</div>
+                <div class="macro-name">Status</div>
+              </button>
+              <button class="macro-card" data-macro-type="toc">
+                <div class="macro-icon" style="background: #fff7e6">📑</div>
+                <div class="macro-name">Table of Contents</div>
+              </button>
+              <button class="macro-card" data-macro-type="code">
+                <div class="macro-icon" style="background: #f6f6f6">💻</div>
+                <div class="macro-name">Code Block</div>
+              </button>
+              <button class="macro-card" data-macro-type="panel">
+                <div class="macro-icon" style="background: #f0f5ff">📋</div>
+                <div class="macro-name">Panel</div>
+              </button>
+              <button class="macro-card" data-macro-type="quote">
+                <div class="macro-icon" style="background: #fafafa">💬</div>
+                <div class="macro-name">Quote</div>
+              </button>
+              <button class="macro-card" data-macro-type="jira">
+                <div class="macro-icon" style="background: #deebff">🎫</div>
+                <div class="macro-name">Jira Issue</div>
+              </button>
+              <button class="macro-card" data-macro-type="attachments">
+                <div class="macro-icon" style="background: #e3fcef">📎</div>
+                <div class="macro-name">Attachments</div>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group" id="macroParameters" style="display: none">
+            <label id="macroParamLabel">Macro Parameters</label>
+            <div id="macroParamFields"></div>
+          </div>
+
+          <div class="form-group">
+            <label>
+              Or Enter Custom Macro Code
+              <span
+                style="
+                  font-size: 11px;
+                  font-weight: 400;
+                  color: var(--neutral-medium);
+                "
+                >(Advanced)</span
+              >
+            </label>
+            <textarea
+              id="customMacroCode"
+              placeholder="Paste Confluence macro code here..."
+              style="font-family: monospace; min-height: 120px"
+            ></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="closeMacroModalBtn">
+            Cancel
+          </button>
+          <button class="btn btn-primary" id="insertMacroBtn">
+            Insert Macro
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Notification -->
     <div class="notification" id="notification">
       <div id="notificationText">Success!</div>
@@ -748,6 +1104,228 @@
         "#9B59B6",
       ];
 
+      let currentEditorIndex = null;
+      let selectedMacroType = null;
+
+      // ============================================================================
+      // MACRO TEMPLATES
+      // ============================================================================
+      const macroTemplates = {
+        info: {
+          name: "Info Panel",
+          params: [
+            {
+              name: "title",
+              label: "Title (optional)",
+              type: "text",
+              default: "Information",
+            },
+          ],
+          template: (params) =>
+            `<ac:structured-macro ac:name="info"><ac:parameter ac:name="title">${escapeHtml(params.title) || "Information"}</ac:parameter><ac:rich-text-body><p>Add your information here</p></ac:rich-text-body></ac:structured-macro>`,
+        },
+        warning: {
+          name: "Warning Panel",
+          params: [
+            {
+              name: "title",
+              label: "Title (optional)",
+              type: "text",
+              default: "Warning",
+            },
+          ],
+          template: (params) =>
+            `<ac:structured-macro ac:name="warning"><ac:parameter ac:name="title">${escapeHtml(params.title) || "Warning"}</ac:parameter><ac:rich-text-body><p>Add your warning message here</p></ac:rich-text-body></ac:structured-macro>`,
+        },
+        tip: {
+          name: "Tip Panel",
+          params: [
+            {
+              name: "title",
+              label: "Title (optional)",
+              type: "text",
+              default: "Tip",
+            },
+          ],
+          template: (params) =>
+            `<ac:structured-macro ac:name="tip"><ac:parameter ac:name="title">${escapeHtml(params.title) || "Tip"}</ac:parameter><ac:rich-text-body><p>Add your tip here</p></ac:rich-text-body></ac:structured-macro>`,
+        },
+        note: {
+          name: "Note Panel",
+          params: [
+            {
+              name: "title",
+              label: "Title (optional)",
+              type: "text",
+              default: "Note",
+            },
+          ],
+          template: (params) =>
+            `<ac:structured-macro ac:name="note"><ac:parameter ac:name="title">${escapeHtml(params.title) || "Note"}</ac:parameter><ac:rich-text-body><p>Add your note here</p></ac:rich-text-body></ac:structured-macro>`,
+        },
+        expand: {
+          name: "Expand",
+          params: [
+            {
+              name: "title",
+              label: "Expand Title",
+              type: "text",
+              default: "Click to expand...",
+            },
+          ],
+          template: (params) =>
+            `<ac:structured-macro ac:name="expand"><ac:parameter ac:name="title">${escapeHtml(params.title) || "Click to expand..."}</ac:parameter><ac:rich-text-body><p>Hidden content goes here</p></ac:rich-text-body></ac:structured-macro>`,
+        },
+        status: {
+          name: "Status",
+          params: [
+            {
+              name: "title",
+              label: "Status Text",
+              type: "text",
+              default: "IN PROGRESS",
+            },
+            {
+              name: "colour",
+              label: "Color",
+              type: "select",
+              options: ["Grey", "Red", "Yellow", "Green", "Blue"],
+              default: "Blue",
+            },
+          ],
+          template: (params) =>
+            `<ac:structured-macro ac:name="status"><ac:parameter ac:name="colour">${params.colour || "Blue"}</ac:parameter><ac:parameter ac:name="title">${escapeHtml(params.title) || "IN PROGRESS"}</ac:parameter></ac:structured-macro>`,
+        },
+        toc: {
+          name: "Table of Contents",
+          params: [
+            {
+              name: "maxLevel",
+              label: "Max Heading Level",
+              type: "number",
+              default: "3",
+            },
+          ],
+          template: (params) =>
+            `<ac:structured-macro ac:name="toc"><ac:parameter ac:name="maxLevel">${params.maxLevel || "3"}</ac:parameter></ac:structured-macro>`,
+        },
+        code: {
+          name: "Code Block",
+          params: [
+            {
+              name: "language",
+              label: "Language",
+              type: "select",
+              options: [
+                "none",
+                "java",
+                "javascript",
+                "python",
+                "sql",
+                "xml",
+                "html",
+                "css",
+                "bash",
+                "powershell",
+              ],
+              default: "none",
+            },
+            {
+              name: "title",
+              label: "Title (optional)",
+              type: "text",
+              default: "",
+            },
+          ],
+          template: (params) =>
+            `<ac:structured-macro ac:name="code"><ac:parameter ac:name="language">${params.language || "none"}</ac:parameter>${params.title ? `<ac:parameter ac:name="title">${escapeHtml(params.title)}</ac:parameter>` : ""}<ac:plain-text-body><![CDATA[// Your code here]]></ac:plain-text-body></ac:structured-macro>`,
+        },
+        panel: {
+          name: "Panel",
+          params: [
+            { name: "title", label: "Panel Title", type: "text", default: "" },
+            {
+              name: "borderColor",
+              label: "Border Color",
+              type: "color",
+              default: "#cccccc",
+            },
+          ],
+          template: (params) =>
+            `<ac:structured-macro ac:name="panel"><ac:parameter ac:name="borderStyle">solid</ac:parameter><ac:parameter ac:name="borderColor">${params.borderColor || "#cccccc"}</ac:parameter>${params.title ? `<ac:parameter ac:name="titleBGColor">#F7F7F7</ac:parameter><ac:parameter ac:name="title">${escapeHtml(params.title)}</ac:parameter>` : ""}<ac:rich-text-body><p>Panel content here</p></ac:rich-text-body></ac:structured-macro>`,
+        },
+        quote: {
+          name: "Quote",
+          params: [],
+          template: (params) =>
+            `<ac:structured-macro ac:name="quote"><ac:rich-text-body><p>Your quote here</p></ac:rich-text-body></ac:structured-macro>`,
+        },
+        jira: {
+          name: "Jira Issue",
+          params: [
+            {
+              name: "key",
+              label: "Issue Key (e.g., PROJ-123)",
+              type: "text",
+              default: "PROJ-123",
+            },
+          ],
+          template: (params) =>
+            `<ac:structured-macro ac:name="jira"><ac:parameter ac:name="key">${escapeHtml(params.key) || "PROJ-123"}</ac:parameter></ac:structured-macro>`,
+        },
+        attachments: {
+          name: "Attachments",
+          params: [],
+          template: (params) => `<ac:structured-macro ac:name="attachments" />`,
+        },
+      };
+
+      // ============================================================================
+      // UTILITY FUNCTIONS
+      // ============================================================================
+      function escapeHtml(text) {
+        if (!text) return "";
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function encodeMacroCode(macroCode) {
+        return btoa(encodeURIComponent(macroCode));
+      }
+
+      function decodeMacroCode(encodedCode) {
+        try {
+          return decodeURIComponent(atob(encodedCode));
+        } catch (e) {
+          console.error("Failed to decode macro code:", e);
+          return "";
+        }
+      }
+
+      function processContentForOutput(htmlContent) {
+        if (!htmlContent) return "";
+
+        const temp = document.createElement("div");
+        temp.innerHTML = htmlContent;
+
+        const macroDivs = temp.querySelectorAll(
+          ".confluence-macro[data-macro-code]",
+        );
+        macroDivs.forEach((macroDiv) => {
+          const encodedMacroCode = macroDiv.getAttribute("data-macro-code");
+          if (encodedMacroCode) {
+            const macroCode = decodeMacroCode(encodedMacroCode);
+            if (macroCode) {
+              const macroPlaceholder = document.createTextNode(macroCode);
+              macroDiv.parentNode.replaceChild(macroPlaceholder, macroDiv);
+            }
+          }
+        });
+
+        return temp.innerHTML;
+      }
+
       // ============================================================================
       // INITIALIZATION
       // ============================================================================
@@ -777,6 +1355,35 @@
         document
           .getElementById("saveTemplateBtn")
           .addEventListener("click", saveTemplate);
+
+        // Modal buttons
+        document
+          .getElementById("closeTableModalBtn")
+          .addEventListener("click", closeTableModal);
+        document
+          .getElementById("insertTableBtn")
+          .addEventListener("click", insertTable);
+        document
+          .getElementById("closeMacroModalBtn")
+          .addEventListener("click", closeMacroModal);
+        document
+          .getElementById("insertMacroBtn")
+          .addEventListener("click", insertMacro);
+
+        // Macro card clicks
+        document.querySelectorAll(".macro-card").forEach((card) => {
+          card.addEventListener("click", () =>
+            selectMacro(card.dataset.macroType, card),
+          );
+        });
+
+        // Escape key closes modals
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            closeTableModal();
+            closeMacroModal();
+          }
+        });
 
         // Load initial component
         renderBuilder();
@@ -885,9 +1492,21 @@
                     <div class="editor-toolbar">
                         <button class="editor-btn" data-command="bold"><strong>B</strong></button>
                         <button class="editor-btn" data-command="italic"><em>I</em></button>
+                        <button class="editor-btn" data-command="underline"><u>U</u></button>
+                        <div class="toolbar-separator"></div>
+                        <button class="editor-btn" data-command="formatBlock" data-value="h3">H3</button>
+                        <button class="editor-btn" data-command="formatBlock" data-value="p">P</button>
+                        <div class="toolbar-separator"></div>
                         <button class="editor-btn" data-command="insertUnorderedList">• List</button>
+                        <button class="editor-btn" data-command="insertOrderedList">1. List</button>
+                        <div class="toolbar-separator"></div>
+                        <button class="editor-btn" data-command="highlight">💡 Highlight</button>
+                        <button class="editor-btn" data-command="createLink">🔗 Link</button>
+                        <div class="toolbar-separator"></div>
+                        <button class="editor-btn table-modal-btn" data-section-index="${i}">📊 Table</button>
+                        <button class="editor-btn macro-modal-btn" data-section-index="${i}">🔌 Macro</button>
                     </div>
-                    <div class="editor-content section-content" data-index="${i}" contenteditable="true" data-placeholder="Enter content...">${section.content}</div>
+                    <div class="editor-content section-content" id="editor-${i}" data-index="${i}" contenteditable="true" data-placeholder="Enter content...">${section.content}</div>
                 </div>
             </div>
         </div>
@@ -923,7 +1542,32 @@
         container.querySelectorAll(".editor-btn").forEach((btn) => {
           btn.addEventListener("click", (e) => {
             e.preventDefault();
-            document.execCommand(btn.dataset.command, false, null);
+
+            // Handle table modal
+            if (btn.classList.contains("table-modal-btn")) {
+              openTableModal(parseInt(btn.dataset.sectionIndex));
+              return;
+            }
+
+            // Handle macro modal
+            if (btn.classList.contains("macro-modal-btn")) {
+              openMacroModal(parseInt(btn.dataset.sectionIndex));
+              return;
+            }
+
+            const command = btn.dataset.command;
+            const value = btn.dataset.value || null;
+
+            if (command === "createLink") {
+              const url = prompt("Enter URL:");
+              if (url) document.execCommand(command, false, url);
+            } else if (command === "highlight") {
+              const highlightHTML =
+                '<div class="highlight-box"><strong>Important:</strong><p>Add your important information here</p></div>';
+              document.execCommand("insertHTML", false, highlightHTML);
+            } else if (command) {
+              document.execCommand(command, false, value);
+            }
           });
         });
       }
@@ -1202,7 +1846,7 @@
             </div>
             <div class="form-group" style="margin-bottom: 0;">
                 <label>Content</label>
-                <textarea class="tab-content" data-index="${i}" rows="3">${escapeHtml(tab.content)}</textarea>
+                <textarea class="tab-content-input" data-index="${i}" rows="3">${escapeHtml(tab.content)}</textarea>
             </div>
         </div>
     `,
@@ -1217,7 +1861,7 @@
           });
         });
 
-        container.querySelectorAll(".tab-content").forEach((input) => {
+        container.querySelectorAll(".tab-content-input").forEach((input) => {
           input.addEventListener("input", (e) => {
             componentData.tabs.tabs[e.target.dataset.index].content =
               e.target.value;
@@ -1270,6 +1914,207 @@
             componentData.divider.thickness = parseInt(e.target.value) || 2;
             updatePreview();
           });
+      }
+
+      // ============================================================================
+      // TABLE MODAL FUNCTIONS
+      // ============================================================================
+      function openTableModal(editorIndex) {
+        currentEditorIndex = editorIndex;
+        const modal = document.getElementById("tableModal");
+        modal.classList.add("show");
+        document.body.classList.add("modal-open");
+
+        modal.onclick = function (e) {
+          if (e.target === modal) closeTableModal();
+        };
+      }
+
+      function closeTableModal() {
+        document.getElementById("tableModal").classList.remove("show");
+        document.body.classList.remove("modal-open");
+        currentEditorIndex = null;
+      }
+
+      function insertTable() {
+        const rows = parseInt(document.getElementById("tableRows").value) || 3;
+        const cols = parseInt(document.getElementById("tableCols").value) || 3;
+        const hasHeader = document.getElementById("tableHeader").checked;
+
+        let tableHTML = "<table><tbody>";
+
+        for (let i = 0; i < rows; i++) {
+          tableHTML += "<tr>";
+          const cellTag = i === 0 && hasHeader ? "th" : "td";
+
+          for (let j = 0; j < cols; j++) {
+            const cellContent =
+              i === 0 && hasHeader
+                ? `Header ${j + 1}`
+                : `Cell ${i + 1},${j + 1}`;
+            tableHTML += `<${cellTag}>${cellContent}</${cellTag}>`;
+          }
+
+          tableHTML += "</tr>";
+        }
+
+        tableHTML += "</tbody></table>";
+
+        if (currentEditorIndex !== null) {
+          const editor = document.getElementById(
+            `editor-${currentEditorIndex}`,
+          );
+          if (editor) {
+            editor.focus();
+            document.execCommand("insertHTML", false, tableHTML);
+            componentData.accordion.sections[currentEditorIndex].content =
+              editor.innerHTML;
+            updatePreview();
+          }
+        }
+
+        closeTableModal();
+        showNotification("Table inserted");
+      }
+
+      // ============================================================================
+      // MACRO MODAL FUNCTIONS
+      // ============================================================================
+      function openMacroModal(editorIndex) {
+        currentEditorIndex = editorIndex;
+        const modal = document.getElementById("macroModal");
+        modal.classList.add("show");
+        document.body.classList.add("modal-open");
+        document.getElementById("customMacroCode").value = "";
+        document.getElementById("macroParameters").style.display = "none";
+        selectedMacroType = null;
+
+        document.querySelectorAll(".macro-card").forEach((card) => {
+          card.classList.remove("selected");
+        });
+
+        modal.onclick = function (e) {
+          if (e.target === modal) closeMacroModal();
+        };
+      }
+
+      function closeMacroModal() {
+        document.getElementById("macroModal").classList.remove("show");
+        document.body.classList.remove("modal-open");
+        currentEditorIndex = null;
+        selectedMacroType = null;
+      }
+
+      function selectMacro(type, clickedCard) {
+        selectedMacroType = type;
+        const macro = macroTemplates[type];
+
+        if (!macro) return;
+
+        const paramContainer = document.getElementById("macroParameters");
+        const paramFields = document.getElementById("macroParamFields");
+        const paramLabel = document.getElementById("macroParamLabel");
+
+        if (macro.params && macro.params.length > 0) {
+          paramLabel.textContent = `${macro.name} Settings`;
+          paramFields.innerHTML = macro.params
+            .map((param, index) => {
+              if (param.type === "select") {
+                return `
+                <div class="macro-param-field">
+                    <label>${param.label}</label>
+                    <select id="macroParam${index}">
+                        ${param.options.map((opt) => `<option value="${opt}" ${opt === param.default ? "selected" : ""}>${opt}</option>`).join("")}
+                    </select>
+                </div>
+              `;
+              } else if (param.type === "number") {
+                return `
+                <div class="macro-param-field">
+                    <label>${param.label}</label>
+                    <input type="number" id="macroParam${index}" value="${param.default}" min="1" max="10">
+                </div>
+              `;
+              } else if (param.type === "color") {
+                return `
+                <div class="macro-param-field">
+                    <label>${param.label}</label>
+                    <input type="color" id="macroParam${index}" value="${param.default}">
+                </div>
+              `;
+              } else {
+                return `
+                <div class="macro-param-field">
+                    <label>${param.label}</label>
+                    <input type="text" id="macroParam${index}" value="${param.default}" placeholder="${param.default}">
+                </div>
+              `;
+              }
+            })
+            .join("");
+          paramContainer.style.display = "block";
+        } else {
+          paramContainer.style.display = "none";
+        }
+
+        document.querySelectorAll(".macro-card").forEach((card) => {
+          card.classList.remove("selected");
+        });
+        if (clickedCard) {
+          clickedCard.classList.add("selected");
+        }
+      }
+
+      function insertMacro() {
+        let macroCode = document.getElementById("customMacroCode").value.trim();
+
+        if (!macroCode && selectedMacroType) {
+          const macro = macroTemplates[selectedMacroType];
+          if (macro) {
+            const params = {};
+            if (macro.params) {
+              macro.params.forEach((param, index) => {
+                const element = document.getElementById(`macroParam${index}`);
+                if (element) {
+                  params[param.name] = element.value;
+                }
+              });
+            }
+            macroCode = macro.template(params);
+          }
+        }
+
+        if (!macroCode) {
+          showNotification(
+            "Please select a macro or enter custom code",
+            "error",
+          );
+          return;
+        }
+
+        const encodedMacroCode = encodeMacroCode(macroCode);
+
+        const macroHTML = `<div class="confluence-macro" contenteditable="false" data-macro-code="${encodedMacroCode}" style="background: #f0f5ff; border: 2px dashed #0052cc; padding: 12px; margin: 10px 0; border-radius: 6px; font-family: monospace; font-size: 12px; white-space: pre-wrap; position: relative;">
+<div style="font-weight: 600; color: #0052cc; margin-bottom: 8px; font-size: 11px;">🔌 CONFLUENCE MACRO</div>
+<div style="word-break: break-all;">${escapeHtml(macroCode)}</div>
+<div style="font-size: 10px; color: #6b778c; margin-top: 8px; font-style: italic;">This macro will render in Confluence</div>
+</div>`;
+
+        if (currentEditorIndex !== null) {
+          const editor = document.getElementById(
+            `editor-${currentEditorIndex}`,
+          );
+          if (editor) {
+            editor.focus();
+            document.execCommand("insertHTML", false, macroHTML);
+            componentData.accordion.sections[currentEditorIndex].content =
+              editor.innerHTML;
+            updatePreview();
+          }
+        }
+
+        closeMacroModal();
+        showNotification("Macro inserted");
       }
 
       // ============================================================================
@@ -1464,14 +2309,24 @@
 .accordion-section { margin-bottom: 10px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 ${data.sections.map((s, i) => `.accordion-section:nth-child(${i + 1}) .acc-header { background: ${s.color}; }`).join("\n")}
 .acc-checkbox { display: none; }
-.acc-header { color: white; padding: 18px 20px; cursor: pointer; font-size: 16px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease; }
+.acc-header { color: white; padding: 18px 20px; cursor: pointer; font-size: 16px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease; user-select: none; }
 .acc-header:hover { filter: brightness(1.1); padding-left: 25px; }
-.acc-icon { font-size: 20px; transition: transform 0.3s ease; }
+.acc-icon { font-size: 20px; transition: transform 0.3s ease; font-weight: bold; }
 .acc-checkbox:checked + .acc-header .acc-icon { transform: rotate(180deg); }
 .acc-content-wrapper { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease; background: white; }
 .acc-checkbox:checked ~ .acc-content-wrapper { max-height: 2000px; padding: 20px; border-left: 4px solid; }
 ${data.sections.map((s, i) => `.accordion-section:nth-child(${i + 1}) .acc-checkbox:checked ~ .acc-content-wrapper { border-color: ${s.color}; }`).join("\n")}
 .acc-content { color: #333; line-height: 1.6; }
+.acc-content h3 { margin-top: 15px; margin-bottom: 10px; font-size: 18px; }
+.acc-content h3:first-child { margin-top: 0; }
+.acc-content p { margin-bottom: 12px; }
+.acc-content ul { margin-left: 20px; margin-bottom: 12px; }
+.acc-content li { margin-bottom: 6px; }
+.acc-content table { width: 100%; border-collapse: collapse; margin: 15px 0; border: 1px solid #ddd; }
+.acc-content table th { background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; border: 1px solid #ddd; }
+.acc-content table td { padding: 10px 12px; border: 1px solid #ddd; }
+.acc-content table tr:nth-child(even) { background: #f8f9fa; }
+.highlight-box { background: #f8f9fa; border-left: 4px solid #7CB342; padding: 15px; margin: 15px 0; border-radius: 4px; }
 </style>
 
 <div class="colorful-accordion">
@@ -1484,7 +2339,7 @@ ${data.sections
       <span class="acc-icon">▼</span>
     </label>
     <div class="acc-content-wrapper">
-      <div class="acc-content">${s.content}</div>
+      <div class="acc-content">${processContentForOutput(s.content)}</div>
     </div>
   </div>`,
   )
@@ -1584,13 +2439,6 @@ function showTab(index) {
       // ============================================================================
       // UTILITIES
       // ============================================================================
-      function escapeHtml(text) {
-        if (!text) return "";
-        const div = document.createElement("div");
-        div.textContent = text;
-        return div.innerHTML;
-      }
-
       function switchTab(tab) {
         document
           .querySelectorAll(".tab")
