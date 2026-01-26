@@ -16,6 +16,7 @@ A general-purpose [Claude Code](https://claude.ai/code) action for GitHub PRs an
 - 📊 **Structured Outputs**: Get validated JSON results that automatically become GitHub Action outputs for complex automations
 - 🏃 **Runs on Your Infrastructure**: The action executes entirely on your own GitHub runner (Anthropic API calls go to your chosen provider)
 - ⚙️ **Simplified Configuration**: Unified `prompt` and `claude_args` inputs provide clean, powerful configuration aligned with Claude Code SDK
+- 🧩 **Skills Plugin System**: Extend Claude's capabilities with specialized skills for marketing, engineering, product management, and more
 
 ## 📦 Upgrading from v0.x?
 
@@ -55,7 +56,7 @@ Each solution includes complete working examples, configuration details, and exp
 - [Setup Guide](./docs/setup.md) - Manual setup, custom GitHub apps, and security best practices
 - [Usage Guide](./docs/usage.md) - Basic usage, workflow configuration, and input parameters
 - [Custom Automations](./docs/custom-automations.md) - Examples of automated workflows and custom prompts
-- [Configuration](./docs/configuration.md) - MCP servers, permissions, environment variables, and advanced settings
+- [Configuration](./docs/configuration.md) - MCP servers, permissions, **skills & plugins**, environment variables, and advanced settings
 - [Experimental Features](./docs/experimental.md) - Execution modes and network restrictions
 - [Cloud Providers](./docs/cloud-providers.md) - AWS Bedrock, Google Vertex AI, and Microsoft Foundry setup
 - [Capabilities & Limitations](./docs/capabilities-and-limitations.md) - What Claude can and cannot do

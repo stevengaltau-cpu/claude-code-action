@@ -32,10 +32,12 @@ jobs:
           #   --max-turns 10
           #   --model claude-4-0-sonnet-20250805
 
-          # Optional: add custom plugin marketplaces
-          # plugin_marketplaces: "https://github.com/user/marketplace1.git\nhttps://github.com/user/marketplace2.git"
-          # Optional: install Claude Code plugins
-          # plugins: "code-review@claude-code-plugins\nfeature-dev@claude-code-plugins"
+          # Optional: add skills plugin marketplace and install skill bundles
+          # plugin_marketplaces: |
+          #   https://github.com/alirezarezvani/claude-skills.git
+          # plugins: |
+          #   engineering-skills@claude-code-skills
+          #   marketing-skills@claude-code-skills
 
           # Optional: add custom trigger phrase (default: @claude)
           # trigger_phrase: "/claude"
@@ -79,8 +81,8 @@ jobs:
 | `allowed_non_write_users`        | **⚠️ RISKY**: Comma-separated list of usernames to allow without write permissions, or '\*' for all users. Only works with `github_token` input. See [Security](./security.md)         | No       | ""            |
 | `path_to_claude_code_executable` | Optional path to a custom Claude Code executable. Skips automatic installation. Useful for Nix, custom containers, or specialized environments                                         | No       | ""            |
 | `path_to_bun_executable`         | Optional path to a custom Bun executable. Skips automatic Bun installation. Useful for Nix, custom containers, or specialized environments                                             | No       | ""            |
-| `plugin_marketplaces`            | Newline-separated list of Claude Code plugin marketplace Git URLs to install from (e.g., see example in workflow above). Marketplaces are added before plugin installation             | No       | ""            |
-| `plugins`                        | Newline-separated list of Claude Code plugin names to install (e.g., see example in workflow above). Plugins are installed before Claude Code execution                                | No       | ""            |
+| `plugin_marketplaces`            | Newline-separated list of Claude Code plugin marketplace Git URLs to install skill bundles from. See [Configuration](./configuration.md#skills-and-plugins) for available bundles      | No       | ""            |
+| `plugins`                        | Newline-separated list of skill bundles or individual skills to install (e.g., `engineering-skills@claude-code-skills`). See [Configuration](./configuration.md#skills-and-plugins)    | No       | ""            |
 
 ### Deprecated Inputs
 

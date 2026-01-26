@@ -116,7 +116,6 @@ The `additional_permissions` input allows Claude to access GitHub Actions workfl
 To allow Claude to view workflow run results, job logs, and CI status:
 
 1. **Grant the necessary permission to your GitHub token**:
-
    - When using the default `GITHUB_TOKEN`, add the `actions: read` permission to your workflow:
 
    ```yaml
@@ -343,6 +342,115 @@ Many individual input parameters have been consolidated into `claude_args` or `s
 | `mcp_config`          | Use `claude_args: "--mcp-config '{...}'"`                |
 | `direct_prompt`       | Use `prompt` input instead                               |
 | `override_prompt`     | Use `prompt` with GitHub context variables               |
+
+## Skills and Plugins
+
+Claude Code supports a plugin system that allows you to extend Claude's capabilities with specialized skills. You can install skills from marketplaces to enhance Claude's expertise in specific domains.
+
+### Adding a Plugin Marketplace
+
+Plugin marketplaces are Git repositories that host skill bundles. Add a marketplace using the `plugin_marketplaces` input:
+
+```yaml
+- uses: anthropics/claude-code-action@v1
+  with:
+    anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+    plugin_marketplaces: |
+      https://github.com/alirezarezvani/claude-skills.git
+    # ... other inputs
+```
+
+You can add multiple marketplaces:
+
+```yaml
+plugin_marketplaces: |
+  https://github.com/alirezarezvani/claude-skills.git
+  https://github.com/your-org/custom-skills.git
+```
+
+Local paths are also supported for development:
+
+```yaml
+plugin_marketplaces: |
+  ./local-skills
+  ../shared-skills
+```
+
+### Installing Skill Bundles
+
+Once marketplaces are added, install skill bundles using the `plugins` input. Plugins follow the format `plugin-name@marketplace-name`:
+
+```yaml
+- uses: anthropics/claude-code-action@v1
+  with:
+    anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+    plugin_marketplaces: |
+      https://github.com/alirezarezvani/claude-skills.git
+    plugins: |
+      marketing-skills@claude-code-skills
+      engineering-skills@claude-code-skills
+      product-skills@claude-code-skills
+    # ... other inputs
+```
+
+### Available Skill Bundles
+
+Common skill bundles available from `claude-code-skills` marketplace:
+
+| Bundle                                  | Skills | Description                               |
+| --------------------------------------- | ------ | ----------------------------------------- |
+| `marketing-skills@claude-code-skills`   | 5      | Marketing and content strategy            |
+| `engineering-skills@claude-code-skills` | 18     | Software engineering best practices       |
+| `product-skills@claude-code-skills`     | 5      | Product management and design             |
+| `c-level-skills@claude-code-skills`     | 2      | C-level advisory capabilities             |
+| `pm-skills@claude-code-skills`          | 6      | Project management expertise              |
+| `ra-qm-skills@claude-code-skills`       | 12     | Regulatory affairs and quality management |
+
+### Installing Individual Skills
+
+You can also install individual skills instead of bundles:
+
+```yaml
+plugins: |
+  content-creator@claude-code-skills
+  fullstack-engineer@claude-code-skills
+  security-reviewer@claude-code-skills
+```
+
+### Complete Example with Skills
+
+```yaml
+name: Claude with Skills
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+
+jobs:
+  claude:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          plugin_marketplaces: |
+            https://github.com/alirezarezvani/claude-skills.git
+          plugins: |
+            engineering-skills@claude-code-skills
+            security-reviewer@claude-code-skills
+```
+
+### Creating Custom Skills
+
+To create your own skill plugins:
+
+1. Create a Git repository to serve as your marketplace
+2. Define skills following the Claude Code plugin specification
+3. Host on GitHub (HTTPS URLs must end with `.git`)
+4. Add your marketplace URL to `plugin_marketplaces`
+
+For more information on creating plugins, see the [Claude Code Plugin documentation](https://docs.claude.com/en/docs/claude-code/plugins).
 
 ## Custom Executables for Specialized Environments
 
