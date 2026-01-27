@@ -1,0 +1,2224 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NDIA Confluence Component Builder - Professional Edition</title>
+    <style>
+      :root {
+        --primary-color: #00acc1;
+        --primary-hover: #0097a7;
+        --success-color: #48bb78;
+        --danger-color: #f56565;
+        --warning-color: #f9a825;
+        --info-color: #3182ce;
+        --neutral-dark: #4a4a4a;
+        --neutral-medium: #6e6e6e;
+        --neutral-light: #9e9e9e;
+        --neutral-lighter: #d0d0d0;
+        --bg-light: #f7fafc;
+        --bg-white: #ffffff;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+        --transition: all 0.2s ease;
+        --spacing-xs: 4px;
+        --spacing-sm: 8px;
+        --spacing-md: 16px;
+        --spacing-lg: 24px;
+        --spacing-xl: 32px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: var(--spacing-md);
+        color: var(--neutral-dark);
+      }
+
+      .app-container {
+        max-width: 1800px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 280px 1fr 1fr;
+        gap: var(--spacing-md);
+        align-items: start;
+      }
+
+      @media (max-width: 1400px) {
+        .app-container {
+          grid-template-columns: 1fr 1fr;
+        }
+        .sidebar-panel {
+          grid-column: 1 / -1;
+          max-height: 250px;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .app-container {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .panel {
+        background: var(--bg-white);
+        border-radius: 12px;
+        box-shadow: var(--shadow-lg);
+        overflow: hidden;
+      }
+
+      .panel-header {
+        padding: var(--spacing-lg);
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          #0097a7 100%
+        );
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .panel-header h1 {
+        font-size: 18px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+      }
+
+      .panel-body {
+        padding: var(--spacing-lg);
+        overflow-y: auto;
+        max-height: calc(100vh - 180px);
+      }
+
+      /* Component Selector - 2 column grid */
+      .component-selector {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .component-type-btn {
+        padding: var(--spacing-sm) var(--spacing-xs);
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        background: white;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+      }
+
+      .component-type-btn:hover {
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+      }
+
+      .component-type-btn.active {
+        border-color: var(--primary-color);
+        background: rgba(0, 172, 193, 0.1);
+      }
+
+      .component-type-btn .icon {
+        font-size: 20px;
+      }
+      .component-type-btn .label {
+        font-size: 10px;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      /* Form Elements */
+      .form-group {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: 600;
+        color: var(--neutral-dark);
+        margin-bottom: var(--spacing-sm);
+        font-size: 14px;
+      }
+
+      .form-group input[type="text"],
+      .form-group input[type="number"],
+      .form-group input[type="url"],
+      .form-group input[type="date"],
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 13px;
+        transition: var(--transition);
+        font-family: inherit;
+      }
+
+      .form-group input[type="color"] {
+        width: 100%;
+        height: 40px;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        cursor: pointer;
+        padding: 2px;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0, 172, 193, 0.1);
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-md);
+      }
+
+      .form-row-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: var(--spacing-md);
+      }
+
+      /* Checkbox styling */
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .checkbox-group input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+      }
+
+      .checkbox-group label {
+        margin-bottom: 0;
+        cursor: pointer;
+        font-weight: 500;
+      }
+
+      /* Buttons */
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+      }
+
+      .btn-primary {
+        background: var(--primary-color);
+        color: white;
+      }
+      .btn-primary:hover {
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+      }
+      .btn-success {
+        background: var(--success-color);
+        color: white;
+      }
+      .btn-danger {
+        background: var(--danger-color);
+        color: white;
+      }
+      .btn-secondary {
+        background: var(--neutral-lighter);
+        color: var(--neutral-dark);
+      }
+      .btn-sm {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* Tabs */
+      .tabs {
+        display: flex;
+        background: var(--bg-light);
+        border-bottom: 2px solid var(--border-color);
+      }
+
+      .tab {
+        flex: 1;
+        padding: var(--spacing-md);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--neutral-medium);
+        transition: var(--transition);
+      }
+
+      .tab.active {
+        color: var(--primary-color);
+        border-bottom: 3px solid var(--primary-color);
+        margin-bottom: -2px;
+      }
+
+      .tab-content {
+        padding: var(--spacing-md);
+        overflow-y: auto;
+        max-height: calc(100vh - 280px);
+      }
+
+      /* Code Output */
+      .code-output {
+        background: #1e1e1e;
+        color: #d4d4d4;
+        padding: var(--spacing-lg);
+        border-radius: 8px;
+        font-family: "Monaco", "Menlo", monospace;
+        font-size: 12px;
+        line-height: 1.6;
+        overflow-x: auto;
+        white-space: pre-wrap;
+      }
+
+      /* Card Items */
+      .card-item {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-md);
+      }
+
+      .card-item-header {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        margin-bottom: var(--spacing-md);
+        padding-bottom: var(--spacing-sm);
+        border-bottom: 2px solid var(--border-color);
+      }
+
+      .card-number {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 12px;
+      }
+
+      /* Empty State */
+      .empty-state {
+        text-align: center;
+        padding: var(--spacing-xl);
+        color: var(--neutral-medium);
+      }
+
+      .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: var(--spacing-md);
+        opacity: 0.5;
+      }
+
+      /* Notification Toast */
+      .notification {
+        position: fixed;
+        top: var(--spacing-lg);
+        right: var(--spacing-lg);
+        padding: var(--spacing-md) var(--spacing-lg);
+        background: white;
+        border-radius: 8px;
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+        z-index: 100000;
+      }
+
+      .notification.show {
+        transform: translateX(0);
+      }
+      .notification.success {
+        border-left: 4px solid var(--success-color);
+      }
+      .notification.error {
+        border-left: 4px solid var(--danger-color);
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg-light);
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--neutral-lighter);
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--neutral-light);
+      }
+
+      /* ============================================ */
+      /* PREVIEW STYLES - ACCORDION                  */
+      /* ============================================ */
+      .colorful-accordion {
+        max-width: 900px;
+        margin: 20px 0;
+      }
+      .accordion-section {
+        margin-bottom: 10px;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      .acc-checkbox {
+        display: none;
+      }
+      .acc-header {
+        color: white;
+        padding: 16px 20px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s ease;
+      }
+      .acc-header:hover {
+        filter: brightness(1.1);
+        padding-left: 25px;
+      }
+      .acc-icon {
+        font-size: 18px;
+        transition: transform 0.3s ease;
+      }
+      .acc-checkbox:checked + .acc-header .acc-icon {
+        transform: rotate(180deg);
+      }
+      .acc-content-wrapper {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease;
+        background: white;
+      }
+      .acc-checkbox:checked ~ .acc-content-wrapper {
+        max-height: 2000px;
+        padding: 20px;
+        border-left: 4px solid;
+      }
+      .acc-content {
+        color: #333;
+        line-height: 1.6;
+      }
+
+      /* ============================================ */
+      /* PREVIEW STYLES - BANNER                     */
+      /* ============================================ */
+      .preview-banner {
+        border-radius: 8px;
+        padding: 40px 30px;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .preview-banner h1 {
+        margin: 0 0 10px 0;
+        font-size: 28px;
+      }
+      .preview-banner p {
+        margin: 0 0 20px 0;
+        font-size: 16px;
+        opacity: 0.9;
+      }
+      .preview-banner .cta-btn {
+        display: inline-block;
+        padding: 12px 30px;
+        border-radius: 6px;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      /* ============================================ */
+      /* PREVIEW STYLES - CARDS                      */
+      /* ============================================ */
+      .preview-cards {
+        display: grid;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+      .preview-card {
+        background: white;
+        border-radius: 8px;
+        padding: 25px;
+        box-shadow: var(--shadow-md);
+        text-align: center;
+        border-top: 4px solid;
+        position: relative;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        text-decoration: none;
+        display: block;
+      }
+      .preview-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+      }
+      .preview-card .card-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .preview-card .card-icon {
+        font-size: 40px;
+        margin-bottom: 15px;
+      }
+      .preview-card h3 {
+        margin: 0 0 10px 0;
+        font-size: 18px;
+        color: var(--neutral-dark);
+      }
+      .preview-card p {
+        margin: 0 0 15px 0;
+        color: var(--neutral-medium);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .preview-card .card-link {
+        color: var(--primary-color);
+        font-weight: 600;
+        font-size: 13px;
+      }
+
+      /* ============================================ */
+      /* PREVIEW STYLES - ALERTS                     */
+      /* ============================================ */
+      .preview-alert {
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        display: flex;
+        gap: 15px;
+        align-items: flex-start;
+      }
+      .preview-alert .alert-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+      }
+      .preview-alert .alert-content h4 {
+        margin: 0 0 5px 0;
+        font-size: 16px;
+      }
+      .preview-alert .alert-content p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .preview-alert.info {
+        background: #ebf8ff;
+        border-left: 4px solid #3182ce;
+      }
+      .preview-alert.success {
+        background: #f0fff4;
+        border-left: 4px solid #38a169;
+      }
+      .preview-alert.warning {
+        background: #fffaf0;
+        border-left: 4px solid #dd6b20;
+      }
+      .preview-alert.error {
+        background: #fff5f5;
+        border-left: 4px solid #e53e3e;
+      }
+
+      /* ============================================ */
+      /* PREVIEW STYLES - NOTIFICATION BANNER        */
+      /* ============================================ */
+      .preview-notif {
+        border-radius: 8px;
+        border-left: 4px solid;
+        margin-bottom: 15px;
+        overflow: hidden;
+      }
+      .preview-notif.info {
+        border-color: #3182ce;
+        background: #ebf8ff;
+      }
+      .preview-notif.success {
+        border-color: #38a169;
+        background: #f0fff4;
+      }
+      .preview-notif.warning {
+        border-color: #dd6b20;
+        background: #fffaf0;
+      }
+      .preview-notif.critical {
+        border-color: #e53e3e;
+        background: #fff5f5;
+      }
+      .preview-notif.neutral {
+        border-color: #718096;
+        background: #f7fafc;
+      }
+      .preview-notif summary {
+        padding: 12px 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        list-style: none;
+      }
+      .preview-notif summary::-webkit-details-marker {
+        display: none;
+      }
+      .preview-notif .notif-emoji {
+        font-size: 20px;
+      }
+      .preview-notif .notif-title {
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .preview-notif .notif-desc {
+        font-size: 13px;
+        color: var(--neutral-medium);
+        margin-left: 8px;
+      }
+      .preview-notif .notif-toggle {
+        margin-left: auto;
+        font-size: 12px;
+        color: var(--neutral-medium);
+      }
+      .preview-notif .notif-body {
+        padding: 0 16px 16px 48px;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      .preview-notif .expiry-chip {
+        display: inline-block;
+        padding: 2px 8px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+        font-size: 11px;
+        margin-top: 8px;
+      }
+
+      /* ============================================ */
+      /* PREVIEW STYLES - PAGE NAVIGATION            */
+      /* ============================================ */
+      .preview-page-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        margin-bottom: 20px;
+        gap: 12px;
+      }
+      .preview-page-nav.center {
+        justify-content: center;
+      }
+      .preview-page-nav .nav-btn {
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: var(--transition);
+      }
+      .preview-page-nav .nav-btn.filled {
+        color: white;
+      }
+      .preview-page-nav .nav-btn.outlined {
+        background: transparent;
+        border: 2px solid;
+      }
+      .preview-page-nav .nav-btn:hover {
+        transform: translateY(-2px);
+      }
+
+      /* ============================================ */
+      /* PREVIEW STYLES - BACK TO TOP                */
+      /* ============================================ */
+      .preview-back-to-top {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        font-weight: 600;
+        transition: var(--transition);
+        border: none;
+      }
+      .preview-back-to-top:hover {
+        transform: scale(1.1);
+      }
+
+      /* ============================================ */
+      /* PREVIEW STYLES - ACTION BUTTONS             */
+      /* ============================================ */
+      .preview-action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 15px;
+        transition: var(--transition);
+        border: none;
+        cursor: pointer;
+      }
+      .preview-action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+      .preview-action-btn .btn-emoji {
+        font-size: 20px;
+      }
+      .preview-action-btn.floating {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        box-shadow: var(--shadow-lg);
+      }
+
+      /* ============================================ */
+      /* PREVIEW STYLES - PROGRESS BAR               */
+      /* ============================================ */
+      .preview-progress {
+        margin-bottom: 20px;
+      }
+      .preview-progress .progress-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+      .preview-progress .progress-label {
+        font-weight: 600;
+        color: var(--neutral-dark);
+      }
+      .preview-progress .progress-value {
+        font-weight: 700;
+      }
+      .preview-progress .progress-track {
+        height: 12px;
+        background: #e2e8f0;
+        border-radius: 6px;
+        overflow: hidden;
+      }
+      .preview-progress .progress-fill {
+        height: 100%;
+        transition: width 0.5s ease;
+      }
+      .preview-progress .progress-fill.striped {
+        background-image: linear-gradient(
+          45deg,
+          rgba(255, 255, 255, 0.15) 25%,
+          transparent 25%,
+          transparent 50%,
+          rgba(255, 255, 255, 0.15) 50%,
+          rgba(255, 255, 255, 0.15) 75%,
+          transparent 75%
+        );
+        background-size: 1rem 1rem;
+      }
+      .preview-progress .progress-fill.animated {
+        animation: progress-stripes 1s linear infinite;
+      }
+      @keyframes progress-stripes {
+        from {
+          background-position: 1rem 0;
+        }
+        to {
+          background-position: 0 0;
+        }
+      }
+
+      /* Editor Styles */
+      .editor-container {
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .editor-container:focus-within {
+        border-color: var(--primary-color);
+      }
+      .editor-toolbar {
+        background: var(--bg-light);
+        border-bottom: 1px solid var(--border-color);
+        padding: var(--spacing-sm);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .editor-btn {
+        background: white;
+        border: 1px solid var(--border-color);
+        padding: 6px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: var(--transition);
+      }
+      .editor-btn:hover {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+      }
+      .editor-content {
+        min-height: 120px;
+        padding: var(--spacing-md);
+        outline: none;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .editor-content:empty::before {
+        content: attr(data-placeholder);
+        color: var(--neutral-light);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Sidebar Panel -->
+      <div class="panel sidebar-panel">
+        <div class="panel-header">
+          <h1>🧩 Components</h1>
+        </div>
+        <div class="panel-body">
+          <div class="component-selector">
+            <button class="component-type-btn active" data-type="accordion">
+              <span class="icon">📚</span>
+              <span class="label">Accordion</span>
+            </button>
+            <button class="component-type-btn" data-type="banner">
+              <span class="icon">🎯</span>
+              <span class="label">Banner</span>
+            </button>
+            <button class="component-type-btn" data-type="cards">
+              <span class="icon">🃏</span>
+              <span class="label">Cards</span>
+            </button>
+            <button class="component-type-btn" data-type="alert">
+              <span class="icon">⚠️</span>
+              <span class="label">Alert</span>
+            </button>
+            <button class="component-type-btn" data-type="notification">
+              <span class="icon">🔔</span>
+              <span class="label">Notification</span>
+            </button>
+            <button class="component-type-btn" data-type="pageNav">
+              <span class="icon">🧭</span>
+              <span class="label">Navigation</span>
+            </button>
+            <button class="component-type-btn" data-type="backToTop">
+              <span class="icon">⬆️</span>
+              <span class="label">Back to Top</span>
+            </button>
+            <button class="component-type-btn" data-type="progress">
+              <span class="icon">📊</span>
+              <span class="label">Progress</span>
+            </button>
+            <button class="component-type-btn" data-type="raiseIdea">
+              <span class="icon">💡</span>
+              <span class="label">Raise Idea</span>
+            </button>
+            <button class="component-type-btn" data-type="changeRequest">
+              <span class="icon">📝</span>
+              <span class="label">Change Req</span>
+            </button>
+          </div>
+          <button
+            class="btn btn-primary btn-sm"
+            style="width: 100%"
+            id="saveTemplateBtn"
+          >
+            💾 Save as Template
+          </button>
+        </div>
+      </div>
+
+      <!-- Builder Panel -->
+      <div class="panel builder-panel">
+        <div class="panel-header">
+          <h1>🛠️ Builder</h1>
+          <button class="btn btn-danger btn-sm" id="resetBtn">🔄 Reset</button>
+        </div>
+        <div class="panel-body" id="builderContent">
+          <!-- Dynamic builder content -->
+        </div>
+      </div>
+
+      <!-- Preview Panel -->
+      <div class="panel preview-panel">
+        <div class="panel-header">
+          <h1>👁️ Preview</h1>
+          <div style="display: flex; gap: 8px">
+            <button class="btn btn-success btn-sm" id="generateCodeBtn">
+              ⚡ Generate
+            </button>
+            <button class="btn btn-primary btn-sm" id="copyCodeBtn">
+              📋 Copy
+            </button>
+          </div>
+        </div>
+        <div class="tabs">
+          <button class="tab active" data-tab="preview">Preview</button>
+          <button class="tab" data-tab="code">Code</button>
+        </div>
+        <div class="tab-content" id="previewView">
+          <div id="previewContainer">
+            <div class="empty-state">
+              <div class="empty-state-icon">📋</div>
+              <p>Configure your component to see preview</p>
+            </div>
+          </div>
+        </div>
+        <div class="tab-content" id="codeView" style="display: none">
+          <div class="code-output" id="codeOutput">
+            // Click "Generate" to see the HTML output
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="notification" id="notification">
+      <span id="notificationText">Success!</span>
+    </div>
+
+    <script>
+      // ============================================================================
+      // STATE MANAGEMENT
+      // ============================================================================
+      let currentComponent = "accordion";
+      const defaultColors = [
+        "#6B2976",
+        "#7CB342",
+        "#FF6B6B",
+        "#4ECDC4",
+        "#FFA500",
+        "#9B59B6",
+      ];
+
+      let componentData = {
+        accordion: { sections: [] },
+        banner: {
+          title: "",
+          subtitle: "",
+          bgColor: "#6B2976",
+          textColor: "#ffffff",
+          ctaText: "",
+          ctaUrl: "",
+          ctaColor: "#ffffff",
+        },
+        cards: { columns: 3, style: "standard", cards: [] },
+        alert: { type: "info", title: "", content: "" },
+        notification: {
+          variant: "warning",
+          emoji: "⚠️",
+          title: "",
+          description: "",
+          expandedContent: "",
+          linkUrl: "",
+          linkText: "View details",
+          expiryDate: "",
+        },
+        pageNav: {
+          style: "filled",
+          color: "#00acc1",
+          showPrevious: true,
+          previousUrl: "",
+          previousLabel: "Previous",
+          showHome: true,
+          homeUrl: "",
+          homeLabel: "Home",
+          showNext: true,
+          nextUrl: "",
+          nextLabel: "Next",
+        },
+        backToTop: {
+          shape: "circle",
+          size: 48,
+          bgColor: "#00acc1",
+          iconColor: "#ffffff",
+          icon: "arrow",
+        },
+        raiseIdea: {
+          style: "inline",
+          text: "Raise an Idea",
+          emoji: "💡",
+          url: "",
+          bgColor: "#48bb78",
+          textColor: "#ffffff",
+        },
+        changeRequest: {
+          style: "inline",
+          text: "Raise a Change Request",
+          emoji: "📝",
+          url: "",
+          bgColor: "#3182ce",
+          textColor: "#ffffff",
+        },
+        progress: {
+          label: "Progress",
+          percentage: 75,
+          showPercentage: true,
+          color: "#48bb78",
+          style: "solid",
+          size: "medium",
+        },
+      };
+
+      // ============================================================================
+      // UTILITY FUNCTIONS
+      // ============================================================================
+      function escapeHtml(text) {
+        if (!text) return "";
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function showNotification(message, type = "success") {
+        const el = document.getElementById("notification");
+        const textEl = document.getElementById("notificationText");
+        textEl.textContent = message;
+        el.className = `notification ${type} show`;
+        setTimeout(() => el.classList.remove("show"), 3000);
+      }
+
+      function switchTab(tab) {
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) => t.classList.toggle("active", t.dataset.tab === tab));
+        document.getElementById("previewView").style.display =
+          tab === "preview" ? "block" : "none";
+        document.getElementById("codeView").style.display =
+          tab === "code" ? "block" : "none";
+      }
+
+      // ============================================================================
+      // INITIALIZATION
+      // ============================================================================
+      function init() {
+        document.querySelectorAll(".component-type-btn").forEach((btn) => {
+          btn.addEventListener("click", () =>
+            selectComponent(btn.dataset.type),
+          );
+        });
+        document.querySelectorAll(".tab").forEach((tab) => {
+          tab.addEventListener("click", () => switchTab(tab.dataset.tab));
+        });
+        document
+          .getElementById("resetBtn")
+          .addEventListener("click", resetComponent);
+        document
+          .getElementById("generateCodeBtn")
+          .addEventListener("click", generateCode);
+        document
+          .getElementById("copyCodeBtn")
+          .addEventListener("click", copyCode);
+        document
+          .getElementById("saveTemplateBtn")
+          .addEventListener("click", saveTemplate);
+        renderBuilder();
+        updatePreview();
+      }
+
+      function selectComponent(type) {
+        currentComponent = type;
+        document.querySelectorAll(".component-type-btn").forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.type === type);
+        });
+        renderBuilder();
+        updatePreview();
+      }
+
+      function resetComponent() {
+        if (!confirm("Reset this component?")) return;
+        const defaults = {
+          accordion: { sections: [] },
+          banner: {
+            title: "",
+            subtitle: "",
+            bgColor: "#6B2976",
+            textColor: "#ffffff",
+            ctaText: "",
+            ctaUrl: "",
+            ctaColor: "#ffffff",
+          },
+          cards: { columns: 3, style: "standard", cards: [] },
+          alert: { type: "info", title: "", content: "" },
+          notification: {
+            variant: "warning",
+            emoji: "⚠️",
+            title: "",
+            description: "",
+            expandedContent: "",
+            linkUrl: "",
+            linkText: "View details",
+            expiryDate: "",
+          },
+          pageNav: {
+            style: "filled",
+            color: "#00acc1",
+            showPrevious: true,
+            previousUrl: "",
+            previousLabel: "Previous",
+            showHome: true,
+            homeUrl: "",
+            homeLabel: "Home",
+            showNext: true,
+            nextUrl: "",
+            nextLabel: "Next",
+          },
+          backToTop: {
+            shape: "circle",
+            size: 48,
+            bgColor: "#00acc1",
+            iconColor: "#ffffff",
+            icon: "arrow",
+          },
+          raiseIdea: {
+            style: "inline",
+            text: "Raise an Idea",
+            emoji: "💡",
+            url: "",
+            bgColor: "#48bb78",
+            textColor: "#ffffff",
+          },
+          changeRequest: {
+            style: "inline",
+            text: "Raise a Change Request",
+            emoji: "📝",
+            url: "",
+            bgColor: "#3182ce",
+            textColor: "#ffffff",
+          },
+          progress: {
+            label: "Progress",
+            percentage: 75,
+            showPercentage: true,
+            color: "#48bb78",
+            style: "solid",
+            size: "medium",
+          },
+        };
+        componentData[currentComponent] = defaults[currentComponent];
+        renderBuilder();
+        updatePreview();
+        showNotification("Reset complete");
+      }
+
+      function saveTemplate() {
+        try {
+          localStorage.setItem(
+            "ndia-component-data",
+            JSON.stringify(componentData),
+          );
+          showNotification("Template saved to browser storage!");
+        } catch (e) {
+          showNotification("Failed to save", "error");
+        }
+      }
+
+      function copyCode() {
+        const code = document.getElementById("codeOutput").textContent;
+        if (code.includes("// No") || code.includes("// Click")) {
+          showNotification("Generate code first", "error");
+          return;
+        }
+        navigator.clipboard
+          .writeText(code)
+          .then(() => showNotification("Copied to clipboard!"))
+          .catch(() => showNotification("Copy failed", "error"));
+      }
+
+      // ============================================================================
+      // BUILDER RENDERERS
+      // ============================================================================
+      function renderBuilder() {
+        const container = document.getElementById("builderContent");
+        const renderers = {
+          accordion: renderAccordionBuilder,
+          banner: renderBannerBuilder,
+          cards: renderCardsBuilder,
+          alert: renderAlertBuilder,
+          notification: renderNotificationBuilder,
+          pageNav: renderPageNavBuilder,
+          backToTop: renderBackToTopBuilder,
+          raiseIdea: renderRaiseIdeaBuilder,
+          changeRequest: renderChangeRequestBuilder,
+          progress: renderProgressBuilder,
+        };
+        if (renderers[currentComponent]) renderers[currentComponent](container);
+      }
+
+      function renderAccordionBuilder(container) {
+        const data = componentData.accordion;
+        container.innerHTML = `
+          <div class="form-group">
+            <label>Number of Sections</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="number" id="sectionCount" min="1" max="20" value="${data.sections.length || 3}">
+              <button class="btn btn-primary" id="generateSectionsBtn">⚡ Generate</button>
+            </div>
+          </div>
+          <div id="accordionSections"></div>`;
+        document
+          .getElementById("generateSectionsBtn")
+          .addEventListener("click", () => {
+            const count =
+              parseInt(document.getElementById("sectionCount").value) || 3;
+            while (data.sections.length < count) {
+              data.sections.push({
+                title: "",
+                color:
+                  defaultColors[data.sections.length % defaultColors.length],
+                content: "",
+              });
+            }
+            data.sections = data.sections.slice(0, count);
+            renderAccordionSections();
+            updatePreview();
+          });
+        renderAccordionSections();
+      }
+
+      function renderAccordionSections() {
+        const container = document.getElementById("accordionSections");
+        if (!container) return;
+        const data = componentData.accordion;
+        if (data.sections.length === 0) {
+          container.innerHTML =
+            '<div class="empty-state"><p>Click Generate to create sections</p></div>';
+          return;
+        }
+        container.innerHTML = data.sections
+          .map(
+            (s, i) => `
+          <div class="card-item">
+            <div class="card-item-header">
+              <div class="card-number" style="background: ${s.color}">${i + 1}</div>
+              <input type="text" class="section-title" data-index="${i}" placeholder="Section title..." value="${escapeHtml(s.title)}" style="flex: 1; margin-right: 8px;">
+              <input type="color" class="section-color" data-index="${i}" value="${s.color}" style="width: 40px; height: 30px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <div class="editor-container">
+                <div class="editor-toolbar">
+                  <button class="editor-btn" data-cmd="bold"><b>B</b></button>
+                  <button class="editor-btn" data-cmd="italic"><i>I</i></button>
+                  <button class="editor-btn" data-cmd="insertUnorderedList">• List</button>
+                </div>
+                <div class="editor-content section-content" data-index="${i}" contenteditable="true" data-placeholder="Enter content...">${s.content}</div>
+              </div>
+            </div>
+          </div>`,
+          )
+          .join("");
+
+        container.querySelectorAll(".section-title").forEach((input) => {
+          input.addEventListener("input", (e) => {
+            componentData.accordion.sections[e.target.dataset.index].title =
+              e.target.value;
+            updatePreview();
+          });
+        });
+        container.querySelectorAll(".section-color").forEach((input) => {
+          input.addEventListener("change", (e) => {
+            componentData.accordion.sections[e.target.dataset.index].color =
+              e.target.value;
+            updatePreview();
+          });
+        });
+        container.querySelectorAll(".section-content").forEach((editor) => {
+          editor.addEventListener("input", (e) => {
+            componentData.accordion.sections[e.target.dataset.index].content =
+              e.target.innerHTML;
+            updatePreview();
+          });
+        });
+        container.querySelectorAll(".editor-btn").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            document.execCommand(btn.dataset.cmd, false, null);
+          });
+        });
+      }
+
+      function renderBannerBuilder(container) {
+        const data = componentData.banner;
+        container.innerHTML = `
+          <div class="form-group"><label>Banner Title</label><input type="text" id="bannerTitle" value="${escapeHtml(data.title)}" placeholder="Welcome to Our Page"></div>
+          <div class="form-group"><label>Subtitle</label><input type="text" id="bannerSubtitle" value="${escapeHtml(data.subtitle)}" placeholder="A brief description"></div>
+          <div class="form-row">
+            <div class="form-group"><label>Background Color</label><input type="color" id="bannerBgColor" value="${data.bgColor}"></div>
+            <div class="form-group"><label>Text Color</label><input type="color" id="bannerTextColor" value="${data.textColor}"></div>
+          </div>
+          <div class="form-group"><label>CTA Button Text</label><input type="text" id="bannerCtaText" value="${escapeHtml(data.ctaText)}" placeholder="Learn More"></div>
+          <div class="form-row">
+            <div class="form-group"><label>CTA URL</label><input type="text" id="bannerCtaUrl" value="${escapeHtml(data.ctaUrl)}" placeholder="https://..."></div>
+            <div class="form-group"><label>CTA Color</label><input type="color" id="bannerCtaColor" value="${data.ctaColor}"></div>
+          </div>`;
+        [
+          "bannerTitle",
+          "bannerSubtitle",
+          "bannerBgColor",
+          "bannerTextColor",
+          "bannerCtaText",
+          "bannerCtaUrl",
+          "bannerCtaColor",
+        ].forEach((id) => {
+          document.getElementById(id).addEventListener("input", (e) => {
+            const key = id
+              .replace("banner", "")
+              .replace(/^[A-Z]/, (c) => c.toLowerCase());
+            const keyMap = {
+              title: "title",
+              subtitle: "subtitle",
+              bgcolor: "bgColor",
+              textcolor: "textColor",
+              ctatext: "ctaText",
+              ctaurl: "ctaUrl",
+              ctacolor: "ctaColor",
+            };
+            componentData.banner[keyMap[key.toLowerCase()]] = e.target.value;
+            updatePreview();
+          });
+        });
+      }
+
+      function renderCardsBuilder(container) {
+        const data = componentData.cards;
+        container.innerHTML = `
+          <div class="form-row">
+            <div class="form-group"><label>Number of Cards</label><input type="number" id="cardCount" min="1" max="12" value="${data.cards.length || 3}"></div>
+            <div class="form-group"><label>Columns</label>
+              <select id="cardColumns">
+                <option value="2" ${data.columns === 2 ? "selected" : ""}>2 Columns</option>
+                <option value="3" ${data.columns === 3 ? "selected" : ""}>3 Columns</option>
+                <option value="4" ${data.columns === 4 ? "selected" : ""}>4 Columns</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="generateCardsBtn" style="width: 100%; margin-bottom: 16px;">⚡ Generate Cards</button>
+          <div id="cardsContainer"></div>`;
+        document
+          .getElementById("generateCardsBtn")
+          .addEventListener("click", () => {
+            const count =
+              parseInt(document.getElementById("cardCount").value) || 3;
+            while (data.cards.length < count) {
+              data.cards.push({
+                icon: "⭐",
+                title: "",
+                description: "",
+                color: defaultColors[data.cards.length % defaultColors.length],
+                linkUrl: "",
+                linkText: "Learn More",
+                badgeText: "",
+              });
+            }
+            data.cards = data.cards.slice(0, count);
+            renderCardItems();
+            updatePreview();
+          });
+        document
+          .getElementById("cardColumns")
+          .addEventListener("change", (e) => {
+            componentData.cards.columns = parseInt(e.target.value);
+            updatePreview();
+          });
+        renderCardItems();
+      }
+
+      function renderCardItems() {
+        const container = document.getElementById("cardsContainer");
+        if (!container) return;
+        const data = componentData.cards;
+        if (data.cards.length === 0) {
+          container.innerHTML =
+            '<div class="empty-state"><p>Click Generate to create cards</p></div>';
+          return;
+        }
+        container.innerHTML = data.cards
+          .map(
+            (c, i) => `
+          <div class="card-item">
+            <div class="card-item-header">
+              <div class="card-number" style="background: ${c.color}">${i + 1}</div>
+              <input type="text" class="card-icon" data-index="${i}" value="${c.icon}" style="width: 45px; text-align: center; font-size: 18px;">
+              <input type="color" class="card-color" data-index="${i}" value="${c.color}" style="width: 40px; height: 30px;">
+            </div>
+            <div class="form-group"><input type="text" class="card-title" data-index="${i}" placeholder="Card Title" value="${escapeHtml(c.title)}"></div>
+            <div class="form-group"><textarea class="card-desc" data-index="${i}" placeholder="Description..." rows="2">${escapeHtml(c.description)}</textarea></div>
+            <div class="form-row">
+              <div class="form-group"><label style="font-size:12px">Link URL</label><input type="text" class="card-link-url" data-index="${i}" placeholder="https://..." value="${escapeHtml(c.linkUrl)}"></div>
+              <div class="form-group"><label style="font-size:12px">Link Text</label><input type="text" class="card-link-text" data-index="${i}" placeholder="Learn More" value="${escapeHtml(c.linkText)}"></div>
+            </div>
+            <div class="form-group"><label style="font-size:12px">Badge (optional)</label><input type="text" class="card-badge" data-index="${i}" placeholder="NEW, UPDATED..." value="${escapeHtml(c.badgeText)}"></div>
+          </div>`,
+          )
+          .join("");
+
+        const bindInput = (selector, field) => {
+          container.querySelectorAll(selector).forEach((input) => {
+            input.addEventListener("input", (e) => {
+              componentData.cards.cards[e.target.dataset.index][field] =
+                e.target.value;
+              updatePreview();
+            });
+          });
+        };
+        bindInput(".card-icon", "icon");
+        bindInput(".card-title", "title");
+        bindInput(".card-desc", "description");
+        bindInput(".card-link-url", "linkUrl");
+        bindInput(".card-link-text", "linkText");
+        bindInput(".card-badge", "badgeText");
+        container.querySelectorAll(".card-color").forEach((input) => {
+          input.addEventListener("change", (e) => {
+            componentData.cards.cards[e.target.dataset.index].color =
+              e.target.value;
+            updatePreview();
+          });
+        });
+      }
+
+      function renderAlertBuilder(container) {
+        const data = componentData.alert;
+        container.innerHTML = `
+          <div class="form-group"><label>Alert Type</label>
+            <select id="alertType">
+              <option value="info" ${data.type === "info" ? "selected" : ""}>ℹ️ Info</option>
+              <option value="success" ${data.type === "success" ? "selected" : ""}>✅ Success</option>
+              <option value="warning" ${data.type === "warning" ? "selected" : ""}>⚠️ Warning</option>
+              <option value="error" ${data.type === "error" ? "selected" : ""}>❌ Error</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Title</label><input type="text" id="alertTitle" value="${escapeHtml(data.title)}" placeholder="Alert Title"></div>
+          <div class="form-group"><label>Content</label><textarea id="alertContent" rows="4" placeholder="Alert message...">${escapeHtml(data.content)}</textarea></div>`;
+        document.getElementById("alertType").addEventListener("change", (e) => {
+          componentData.alert.type = e.target.value;
+          updatePreview();
+        });
+        document.getElementById("alertTitle").addEventListener("input", (e) => {
+          componentData.alert.title = e.target.value;
+          updatePreview();
+        });
+        document
+          .getElementById("alertContent")
+          .addEventListener("input", (e) => {
+            componentData.alert.content = e.target.value;
+            updatePreview();
+          });
+      }
+
+      function renderNotificationBuilder(container) {
+        const data = componentData.notification;
+        container.innerHTML = `
+          <div class="form-row">
+            <div class="form-group"><label>Variant</label>
+              <select id="notifVariant">
+                <option value="info" ${data.variant === "info" ? "selected" : ""}>Info (Blue)</option>
+                <option value="success" ${data.variant === "success" ? "selected" : ""}>Success (Green)</option>
+                <option value="warning" ${data.variant === "warning" ? "selected" : ""}>Warning (Amber)</option>
+                <option value="critical" ${data.variant === "critical" ? "selected" : ""}>Critical (Red)</option>
+                <option value="neutral" ${data.variant === "neutral" ? "selected" : ""}>Neutral (Grey)</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Emoji</label><input type="text" id="notifEmoji" value="${data.emoji}" style="text-align:center; font-size:18px;"></div>
+          </div>
+          <div class="form-group"><label>Title (required)</label><input type="text" id="notifTitle" value="${escapeHtml(data.title)}" placeholder="System Maintenance"></div>
+          <div class="form-group"><label>Description</label><input type="text" id="notifDesc" value="${escapeHtml(data.description)}" placeholder="Brief description..."></div>
+          <div class="form-group"><label>Expanded Content</label><textarea id="notifExpanded" rows="3" placeholder="Additional details shown when expanded...">${escapeHtml(data.expandedContent)}</textarea></div>
+          <div class="form-row">
+            <div class="form-group"><label>Link URL</label><input type="text" id="notifLinkUrl" value="${escapeHtml(data.linkUrl)}" placeholder="https://..."></div>
+            <div class="form-group"><label>Link Text</label><input type="text" id="notifLinkText" value="${escapeHtml(data.linkText)}" placeholder="View details"></div>
+          </div>
+          <div class="form-group"><label>Expiry Date</label><input type="date" id="notifExpiry" value="${data.expiryDate}"></div>`;
+        const bind = (id, field) =>
+          document.getElementById(id).addEventListener("input", (e) => {
+            componentData.notification[field] = e.target.value;
+            updatePreview();
+          });
+        document
+          .getElementById("notifVariant")
+          .addEventListener("change", (e) => {
+            componentData.notification.variant = e.target.value;
+            updatePreview();
+          });
+        bind("notifEmoji", "emoji");
+        bind("notifTitle", "title");
+        bind("notifDesc", "description");
+        bind("notifExpanded", "expandedContent");
+        bind("notifLinkUrl", "linkUrl");
+        bind("notifLinkText", "linkText");
+        bind("notifExpiry", "expiryDate");
+      }
+
+      function renderPageNavBuilder(container) {
+        const data = componentData.pageNav;
+        container.innerHTML = `
+          <div class="form-row">
+            <div class="form-group"><label>Style</label>
+              <select id="navStyle"><option value="filled" ${data.style === "filled" ? "selected" : ""}>Filled</option><option value="outlined" ${data.style === "outlined" ? "selected" : ""}>Outlined</option></select>
+            </div>
+            <div class="form-group"><label>Color</label><input type="color" id="navColor" value="${data.color}"></div>
+          </div>
+          <div class="card-item"><h4 style="margin-bottom:12px">◀ Previous Button</h4>
+            <div class="checkbox-group"><input type="checkbox" id="showPrev" ${data.showPrevious ? "checked" : ""}><label for="showPrev">Show Previous</label></div>
+            <div class="form-row"><div class="form-group"><label>Label</label><input type="text" id="prevLabel" value="${escapeHtml(data.previousLabel)}"></div>
+            <div class="form-group"><label>URL</label><input type="text" id="prevUrl" value="${escapeHtml(data.previousUrl)}" placeholder="https://..."></div></div>
+          </div>
+          <div class="card-item"><h4 style="margin-bottom:12px">🏠 Home Button</h4>
+            <div class="checkbox-group"><input type="checkbox" id="showHome" ${data.showHome ? "checked" : ""}><label for="showHome">Show Home</label></div>
+            <div class="form-row"><div class="form-group"><label>Label</label><input type="text" id="homeLabel" value="${escapeHtml(data.homeLabel)}"></div>
+            <div class="form-group"><label>URL</label><input type="text" id="homeUrl" value="${escapeHtml(data.homeUrl)}" placeholder="https://..."></div></div>
+          </div>
+          <div class="card-item"><h4 style="margin-bottom:12px">Next Button ▶</h4>
+            <div class="checkbox-group"><input type="checkbox" id="showNext" ${data.showNext ? "checked" : ""}><label for="showNext">Show Next</label></div>
+            <div class="form-row"><div class="form-group"><label>Label</label><input type="text" id="nextLabel" value="${escapeHtml(data.nextLabel)}"></div>
+            <div class="form-group"><label>URL</label><input type="text" id="nextUrl" value="${escapeHtml(data.nextUrl)}" placeholder="https://..."></div></div>
+          </div>`;
+        document.getElementById("navStyle").addEventListener("change", (e) => {
+          componentData.pageNav.style = e.target.value;
+          updatePreview();
+        });
+        document.getElementById("navColor").addEventListener("input", (e) => {
+          componentData.pageNav.color = e.target.value;
+          updatePreview();
+        });
+        ["showPrev", "showHome", "showNext"].forEach((id) => {
+          document.getElementById(id).addEventListener("change", (e) => {
+            componentData.pageNav[id.replace("show", "show")] =
+              e.target.checked;
+            updatePreview();
+          });
+        });
+        document.getElementById("showPrev").addEventListener("change", (e) => {
+          componentData.pageNav.showPrevious = e.target.checked;
+          updatePreview();
+        });
+        document.getElementById("showHome").addEventListener("change", (e) => {
+          componentData.pageNav.showHome = e.target.checked;
+          updatePreview();
+        });
+        document.getElementById("showNext").addEventListener("change", (e) => {
+          componentData.pageNav.showNext = e.target.checked;
+          updatePreview();
+        });
+        [
+          "prevLabel",
+          "prevUrl",
+          "homeLabel",
+          "homeUrl",
+          "nextLabel",
+          "nextUrl",
+        ].forEach((id) => {
+          document.getElementById(id).addEventListener("input", (e) => {
+            const map = {
+              prevLabel: "previousLabel",
+              prevUrl: "previousUrl",
+              homeLabel: "homeLabel",
+              homeUrl: "homeUrl",
+              nextLabel: "nextLabel",
+              nextUrl: "nextUrl",
+            };
+            componentData.pageNav[map[id]] = e.target.value;
+            updatePreview();
+          });
+        });
+      }
+
+      function renderBackToTopBuilder(container) {
+        const data = componentData.backToTop;
+        container.innerHTML = `
+          <div class="form-row">
+            <div class="form-group"><label>Shape</label>
+              <select id="bttShape"><option value="circle" ${data.shape === "circle" ? "selected" : ""}>Circle</option><option value="rounded" ${data.shape === "rounded" ? "selected" : ""}>Rounded</option><option value="square" ${data.shape === "square" ? "selected" : ""}>Square</option></select>
+            </div>
+            <div class="form-group"><label>Size (px)</label><input type="number" id="bttSize" value="${data.size}" min="32" max="80"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Background</label><input type="color" id="bttBgColor" value="${data.bgColor}"></div>
+            <div class="form-group"><label>Icon Color</label><input type="color" id="bttIconColor" value="${data.iconColor}"></div>
+          </div>
+          <div class="form-group"><label>Icon</label>
+            <select id="bttIcon"><option value="arrow" ${data.icon === "arrow" ? "selected" : ""}>Arrow ▲</option><option value="chevron" ${data.icon === "chevron" ? "selected" : ""}>Chevron ⌃</option><option value="text" ${data.icon === "text" ? "selected" : ""}>Text "TOP"</option></select>
+          </div>`;
+        document.getElementById("bttShape").addEventListener("change", (e) => {
+          componentData.backToTop.shape = e.target.value;
+          updatePreview();
+        });
+        document.getElementById("bttSize").addEventListener("input", (e) => {
+          componentData.backToTop.size = parseInt(e.target.value);
+          updatePreview();
+        });
+        document.getElementById("bttBgColor").addEventListener("input", (e) => {
+          componentData.backToTop.bgColor = e.target.value;
+          updatePreview();
+        });
+        document
+          .getElementById("bttIconColor")
+          .addEventListener("input", (e) => {
+            componentData.backToTop.iconColor = e.target.value;
+            updatePreview();
+          });
+        document.getElementById("bttIcon").addEventListener("change", (e) => {
+          componentData.backToTop.icon = e.target.value;
+          updatePreview();
+        });
+      }
+
+      function renderRaiseIdeaBuilder(container) {
+        const data = componentData.raiseIdea;
+        container.innerHTML = `
+          <div class="form-group"><label>Button Text</label><input type="text" id="ideaText" value="${escapeHtml(data.text)}"></div>
+          <div class="form-row">
+            <div class="form-group"><label>Emoji</label><input type="text" id="ideaEmoji" value="${data.emoji}" style="text-align:center; font-size:18px;"></div>
+            <div class="form-group"><label>Style</label>
+              <select id="ideaStyle"><option value="inline" ${data.style === "inline" ? "selected" : ""}>Inline</option><option value="floating" ${data.style === "floating" ? "selected" : ""}>Floating</option></select>
+            </div>
+          </div>
+          <div class="form-group"><label>Link URL</label><input type="text" id="ideaUrl" value="${escapeHtml(data.url)}" placeholder="https://jira.../servicedesk..."></div>
+          <div class="form-row">
+            <div class="form-group"><label>Background</label><input type="color" id="ideaBgColor" value="${data.bgColor}"></div>
+            <div class="form-group"><label>Text Color</label><input type="color" id="ideaTextColor" value="${data.textColor}"></div>
+          </div>`;
+        document.getElementById("ideaText").addEventListener("input", (e) => {
+          componentData.raiseIdea.text = e.target.value;
+          updatePreview();
+        });
+        document.getElementById("ideaEmoji").addEventListener("input", (e) => {
+          componentData.raiseIdea.emoji = e.target.value;
+          updatePreview();
+        });
+        document.getElementById("ideaStyle").addEventListener("change", (e) => {
+          componentData.raiseIdea.style = e.target.value;
+          updatePreview();
+        });
+        document.getElementById("ideaUrl").addEventListener("input", (e) => {
+          componentData.raiseIdea.url = e.target.value;
+          updatePreview();
+        });
+        document
+          .getElementById("ideaBgColor")
+          .addEventListener("input", (e) => {
+            componentData.raiseIdea.bgColor = e.target.value;
+            updatePreview();
+          });
+        document
+          .getElementById("ideaTextColor")
+          .addEventListener("input", (e) => {
+            componentData.raiseIdea.textColor = e.target.value;
+            updatePreview();
+          });
+      }
+
+      function renderChangeRequestBuilder(container) {
+        const data = componentData.changeRequest;
+        container.innerHTML = `
+          <div class="form-group"><label>Button Text</label><input type="text" id="crText" value="${escapeHtml(data.text)}"></div>
+          <div class="form-row">
+            <div class="form-group"><label>Emoji</label><input type="text" id="crEmoji" value="${data.emoji}" style="text-align:center; font-size:18px;"></div>
+            <div class="form-group"><label>Style</label>
+              <select id="crStyle"><option value="inline" ${data.style === "inline" ? "selected" : ""}>Inline</option><option value="floating" ${data.style === "floating" ? "selected" : ""}>Floating</option></select>
+            </div>
+          </div>
+          <div class="form-group"><label>Jira Service Manager URL</label><input type="text" id="crUrl" value="${escapeHtml(data.url)}" placeholder="https://jira.../servicedesk..."></div>
+          <div class="form-row">
+            <div class="form-group"><label>Background</label><input type="color" id="crBgColor" value="${data.bgColor}"></div>
+            <div class="form-group"><label>Text Color</label><input type="color" id="crTextColor" value="${data.textColor}"></div>
+          </div>`;
+        document.getElementById("crText").addEventListener("input", (e) => {
+          componentData.changeRequest.text = e.target.value;
+          updatePreview();
+        });
+        document.getElementById("crEmoji").addEventListener("input", (e) => {
+          componentData.changeRequest.emoji = e.target.value;
+          updatePreview();
+        });
+        document.getElementById("crStyle").addEventListener("change", (e) => {
+          componentData.changeRequest.style = e.target.value;
+          updatePreview();
+        });
+        document.getElementById("crUrl").addEventListener("input", (e) => {
+          componentData.changeRequest.url = e.target.value;
+          updatePreview();
+        });
+        document.getElementById("crBgColor").addEventListener("input", (e) => {
+          componentData.changeRequest.bgColor = e.target.value;
+          updatePreview();
+        });
+        document
+          .getElementById("crTextColor")
+          .addEventListener("input", (e) => {
+            componentData.changeRequest.textColor = e.target.value;
+            updatePreview();
+          });
+      }
+
+      function renderProgressBuilder(container) {
+        const data = componentData.progress;
+        container.innerHTML = `
+          <div class="form-group"><label>Label</label><input type="text" id="progressLabel" value="${escapeHtml(data.label)}" placeholder="Project Completion"></div>
+          <div class="form-row">
+            <div class="form-group"><label>Percentage</label><input type="number" id="progressPercent" value="${data.percentage}" min="0" max="100"></div>
+            <div class="form-group"><label>Color</label><input type="color" id="progressColor" value="${data.color}"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Style</label>
+              <select id="progressStyle"><option value="solid" ${data.style === "solid" ? "selected" : ""}>Solid</option><option value="striped" ${data.style === "striped" ? "selected" : ""}>Striped</option><option value="animated" ${data.style === "animated" ? "selected" : ""}>Animated</option></select>
+            </div>
+            <div class="form-group"><label>Size</label>
+              <select id="progressSize"><option value="small" ${data.size === "small" ? "selected" : ""}>Small</option><option value="medium" ${data.size === "medium" ? "selected" : ""}>Medium</option><option value="large" ${data.size === "large" ? "selected" : ""}>Large</option></select>
+            </div>
+          </div>
+          <div class="checkbox-group"><input type="checkbox" id="progressShowPercent" ${data.showPercentage ? "checked" : ""}><label for="progressShowPercent">Show Percentage</label></div>`;
+        document
+          .getElementById("progressLabel")
+          .addEventListener("input", (e) => {
+            componentData.progress.label = e.target.value;
+            updatePreview();
+          });
+        document
+          .getElementById("progressPercent")
+          .addEventListener("input", (e) => {
+            componentData.progress.percentage = parseInt(e.target.value) || 0;
+            updatePreview();
+          });
+        document
+          .getElementById("progressColor")
+          .addEventListener("input", (e) => {
+            componentData.progress.color = e.target.value;
+            updatePreview();
+          });
+        document
+          .getElementById("progressStyle")
+          .addEventListener("change", (e) => {
+            componentData.progress.style = e.target.value;
+            updatePreview();
+          });
+        document
+          .getElementById("progressSize")
+          .addEventListener("change", (e) => {
+            componentData.progress.size = e.target.value;
+            updatePreview();
+          });
+        document
+          .getElementById("progressShowPercent")
+          .addEventListener("change", (e) => {
+            componentData.progress.showPercentage = e.target.checked;
+            updatePreview();
+          });
+      }
+
+      // ============================================================================
+      // PREVIEW RENDERERS
+      // ============================================================================
+      function updatePreview() {
+        const container = document.getElementById("previewContainer");
+        const renderers = {
+          accordion: renderAccordionPreview,
+          banner: renderBannerPreview,
+          cards: renderCardsPreview,
+          alert: renderAlertPreview,
+          notification: renderNotificationPreview,
+          pageNav: renderPageNavPreview,
+          backToTop: renderBackToTopPreview,
+          raiseIdea: renderRaiseIdeaPreview,
+          changeRequest: renderChangeRequestPreview,
+          progress: renderProgressPreview,
+        };
+        if (renderers[currentComponent]) renderers[currentComponent](container);
+      }
+
+      function renderAccordionPreview(container) {
+        const data = componentData.accordion;
+        if (data.sections.length === 0) {
+          container.innerHTML =
+            '<div class="empty-state"><div class="empty-state-icon">📋</div><p>Generate sections to see preview</p></div>';
+          return;
+        }
+        container.innerHTML = `<div class="colorful-accordion">${data.sections
+          .map(
+            (s, i) => `
+          <div class="accordion-section">
+            <input type="checkbox" id="prev-acc-${i}" class="acc-checkbox">
+            <label for="prev-acc-${i}" class="acc-header" style="background: ${s.color}">
+              <span>${escapeHtml(s.title) || "Untitled"}</span><span class="acc-icon">▼</span>
+            </label>
+            <div class="acc-content-wrapper" style="border-color: ${s.color}">
+              <div class="acc-content">${s.content || "<p>No content</p>"}</div>
+            </div>
+          </div>`,
+          )
+          .join("")}</div>`;
+      }
+
+      function renderBannerPreview(container) {
+        const data = componentData.banner;
+        const cta = data.ctaText
+          ? `<a href="${escapeHtml(data.ctaUrl) || "#"}" class="cta-btn" style="background: ${data.ctaColor}; color: ${data.bgColor};">${escapeHtml(data.ctaText)}</a>`
+          : "";
+        container.innerHTML = `<div class="preview-banner" style="background: ${data.bgColor}; color: ${data.textColor};">
+          <h1>${escapeHtml(data.title) || "Banner Title"}</h1>
+          <p>${escapeHtml(data.subtitle) || "Banner subtitle goes here"}</p>${cta}</div>`;
+      }
+
+      function renderCardsPreview(container) {
+        const data = componentData.cards;
+        if (data.cards.length === 0) {
+          container.innerHTML =
+            '<div class="empty-state"><div class="empty-state-icon">🃏</div><p>Generate cards to see preview</p></div>';
+          return;
+        }
+        container.innerHTML = `<div class="preview-cards" style="grid-template-columns: repeat(${data.columns}, 1fr);">
+          ${data.cards
+            .map((c) => {
+              const badge = c.badgeText
+                ? `<span class="card-badge" style="background: ${c.color}; color: white;">${escapeHtml(c.badgeText)}</span>`
+                : "";
+              const link = c.linkUrl
+                ? `<span class="card-link">${escapeHtml(c.linkText) || "Learn More"} →</span>`
+                : "";
+              const tag = c.linkUrl ? "a" : "div";
+              const href = c.linkUrl ? ` href="${escapeHtml(c.linkUrl)}"` : "";
+              return `<${tag}${href} class="preview-card" style="border-top-color: ${c.color};">
+              ${badge}<div class="card-icon">${c.icon}</div>
+              <h3>${escapeHtml(c.title) || "Card Title"}</h3>
+              <p>${escapeHtml(c.description) || "Card description"}</p>${link}</${tag}>`;
+            })
+            .join("")}</div>`;
+      }
+
+      function renderAlertPreview(container) {
+        const data = componentData.alert;
+        const icons = { info: "ℹ️", success: "✅", warning: "⚠️", error: "❌" };
+        container.innerHTML = `<div class="preview-alert ${data.type}">
+          <span class="alert-icon">${icons[data.type]}</span>
+          <div class="alert-content"><h4>${escapeHtml(data.title) || "Alert Title"}</h4>
+          <p>${escapeHtml(data.content) || "Alert content goes here..."}</p></div></div>`;
+      }
+
+      function renderNotificationPreview(container) {
+        const data = componentData.notification;
+        const link = data.linkUrl
+          ? `<p><a href="${escapeHtml(data.linkUrl)}">${escapeHtml(data.linkText) || "View details"}</a></p>`
+          : "";
+        const expiry = data.expiryDate
+          ? `<span class="expiry-chip">Expires: ${data.expiryDate}</span>`
+          : "";
+        container.innerHTML = `<details class="preview-notif ${data.variant}">
+          <summary>
+            <span class="notif-emoji">${data.emoji}</span>
+            <span class="notif-title">${escapeHtml(data.title) || "Notification Title"}</span>
+            <span class="notif-desc">${escapeHtml(data.description)}</span>
+            <span class="notif-toggle">▼ More</span>
+          </summary>
+          <div class="notif-body">
+            <p>${escapeHtml(data.expandedContent) || "Additional details go here..."}</p>
+            ${link}${expiry}
+          </div>
+        </details>`;
+      }
+
+      function renderPageNavPreview(container) {
+        const data = componentData.pageNav;
+        const style =
+          data.style === "filled"
+            ? `background: ${data.color}; color: white;`
+            : `border: 2px solid ${data.color}; color: ${data.color};`;
+        const cls = data.style === "filled" ? "filled" : "outlined";
+        let html = '<nav class="preview-page-nav">';
+        if (data.showPrevious)
+          html += `<a href="${escapeHtml(data.previousUrl) || "#"}" class="nav-btn ${cls}" style="${style}">◀ ${escapeHtml(data.previousLabel)}</a>`;
+        if (data.showHome)
+          html += `<a href="${escapeHtml(data.homeUrl) || "#"}" class="nav-btn ${cls}" style="${style}">🏠 ${escapeHtml(data.homeLabel)}</a>`;
+        if (data.showNext)
+          html += `<a href="${escapeHtml(data.nextUrl) || "#"}" class="nav-btn ${cls}" style="${style}">${escapeHtml(data.nextLabel)} ▶</a>`;
+        html += "</nav>";
+        container.innerHTML = html;
+      }
+
+      function renderBackToTopPreview(container) {
+        const data = componentData.backToTop;
+        const icons = { arrow: "▲", chevron: "⌃", text: "TOP" };
+        const radius =
+          data.shape === "circle"
+            ? "50%"
+            : data.shape === "rounded"
+              ? "8px"
+              : "0";
+        container.innerHTML = `<div style="text-align: center; padding: 40px;">
+          <p style="margin-bottom: 20px; color: #666;">Preview of Back to Top button:</p>
+          <button class="preview-back-to-top" style="width: ${data.size}px; height: ${data.size}px; background: ${data.bgColor}; color: ${data.iconColor}; border-radius: ${radius}; font-size: ${data.icon === "text" ? "12px" : "20px"};">
+            ${icons[data.icon]}
+          </button>
+        </div>`;
+      }
+
+      function renderRaiseIdeaPreview(container) {
+        const data = componentData.raiseIdea;
+        container.innerHTML = `<div style="padding: 20px; text-align: center;">
+          <a href="${escapeHtml(data.url) || "#"}" class="preview-action-btn" style="background: ${data.bgColor}; color: ${data.textColor};">
+            <span class="btn-emoji">${data.emoji}</span>
+            <span>${escapeHtml(data.text)}</span>
+          </a>
+        </div>`;
+      }
+
+      function renderChangeRequestPreview(container) {
+        const data = componentData.changeRequest;
+        container.innerHTML = `<div style="padding: 20px; text-align: center;">
+          <a href="${escapeHtml(data.url) || "#"}" class="preview-action-btn" style="background: ${data.bgColor}; color: ${data.textColor};">
+            <span class="btn-emoji">${data.emoji}</span>
+            <span>${escapeHtml(data.text)}</span>
+          </a>
+        </div>`;
+      }
+
+      function renderProgressPreview(container) {
+        const data = componentData.progress;
+        const heights = { small: "8px", medium: "12px", large: "20px" };
+        const styleClass = data.style !== "solid" ? ` ${data.style}` : "";
+        container.innerHTML = `<div class="preview-progress">
+          <div class="progress-header">
+            <span class="progress-label">${escapeHtml(data.label)}</span>
+            ${data.showPercentage ? `<span class="progress-value" style="color: ${data.color}">${data.percentage}%</span>` : ""}
+          </div>
+          <div class="progress-track" style="height: ${heights[data.size]}">
+            <div class="progress-fill${styleClass}" style="width: ${data.percentage}%; background: ${data.color}; border-radius: 6px;"></div>
+          </div>
+        </div>`;
+      }
+
+      // ============================================================================
+      // CODE GENERATORS
+      // ============================================================================
+      function generateCode() {
+        const generators = {
+          accordion: generateAccordionCode,
+          banner: generateBannerCode,
+          cards: generateCardsCode,
+          alert: generateAlertCode,
+          notification: generateNotificationCode,
+          pageNav: generatePageNavCode,
+          backToTop: generateBackToTopCode,
+          raiseIdea: generateRaiseIdeaCode,
+          changeRequest: generateChangeRequestCode,
+          progress: generateProgressCode,
+        };
+        const code = generators[currentComponent]
+          ? generators[currentComponent]()
+          : "// No code generator for this component";
+        document.getElementById("codeOutput").textContent = code;
+        switchTab("code");
+        showNotification("Code generated!");
+      }
+
+      function generateAccordionCode() {
+        const data = componentData.accordion;
+        if (data.sections.length === 0) return "// No sections to generate";
+        return `<style>
+.colorful-accordion { max-width: 900px; margin: 20px 0; }
+.accordion-section { margin-bottom: 10px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.acc-checkbox { display: none; }
+.acc-header { color: white; padding: 16px 20px; cursor: pointer; font-size: 15px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+.acc-header:hover { filter: brightness(1.1); }
+.acc-icon { transition: transform 0.3s ease; }
+.acc-checkbox:checked + .acc-header .acc-icon { transform: rotate(180deg); }
+.acc-content-wrapper { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: white; }
+.acc-checkbox:checked ~ .acc-content-wrapper { max-height: 2000px; padding: 20px; border-left: 4px solid; }
+.acc-content { color: #333; line-height: 1.6; }
+</style>
+
+<div class="colorful-accordion">
+${data.sections
+  .map(
+    (s, i) => `  <div class="accordion-section">
+    <input type="checkbox" id="section${i + 1}" class="acc-checkbox">
+    <label for="section${i + 1}" class="acc-header" style="background: ${s.color}">
+      <span>${escapeHtml(s.title)}</span><span class="acc-icon">▼</span>
+    </label>
+    <div class="acc-content-wrapper" style="border-color: ${s.color}">
+      <div class="acc-content">${s.content}</div>
+    </div>
+  </div>`,
+  )
+  .join("\n")}
+</div>`;
+      }
+
+      function generateBannerCode() {
+        const data = componentData.banner;
+        const cta = data.ctaText
+          ? `\n    <a href="${escapeHtml(data.ctaUrl) || "#"}" style="display: inline-block; padding: 12px 30px; background: ${data.ctaColor}; color: ${data.bgColor}; border-radius: 6px; font-weight: 600; text-decoration: none;">${escapeHtml(data.ctaText)}</a>`
+          : "";
+        return `<div style="background: ${data.bgColor}; color: ${data.textColor}; padding: 40px 30px; border-radius: 8px; text-align: center;">
+    <h1 style="margin: 0 0 10px 0; font-size: 28px;">${escapeHtml(data.title) || "Banner Title"}</h1>
+    <p style="margin: 0 0 20px 0; font-size: 16px; opacity: 0.9;">${escapeHtml(data.subtitle) || "Banner subtitle"}</p>${cta}
+</div>`;
+      }
+
+      function generateCardsCode() {
+        const data = componentData.cards;
+        if (data.cards.length === 0) return "// No cards to generate";
+        return `<style>
+.card-grid { display: grid; grid-template-columns: repeat(${data.columns}, 1fr); gap: 20px; }
+.feature-card { background: white; border-radius: 8px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; border-top: 4px solid; text-decoration: none; display: block; transition: transform 0.2s, box-shadow 0.2s; position: relative; }
+.feature-card:hover { transform: translateY(-4px); box-shadow: 0 8px 15px rgba(0,0,0,0.15); }
+.feature-card .badge { position: absolute; top: 12px; right: 12px; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; color: white; }
+.feature-card .icon { font-size: 40px; margin-bottom: 15px; }
+.feature-card h3 { margin: 0 0 10px 0; font-size: 18px; color: #4A4A4A; }
+.feature-card p { margin: 0 0 15px 0; color: #6E6E6E; font-size: 14px; line-height: 1.5; }
+.feature-card .link { color: #00acc1; font-weight: 600; font-size: 13px; }
+</style>
+
+<div class="card-grid">
+${data.cards
+  .map((c) => {
+    const badge = c.badgeText
+      ? `\n    <span class="badge" style="background: ${c.color}">${escapeHtml(c.badgeText)}</span>`
+      : "";
+    const link = c.linkText
+      ? `\n    <span class="link">${escapeHtml(c.linkText)} →</span>`
+      : "";
+    const tag = c.linkUrl ? "a" : "div";
+    const href = c.linkUrl ? ` href="${escapeHtml(c.linkUrl)}"` : "";
+    return `  <${tag}${href} class="feature-card" style="border-top-color: ${c.color};">${badge}
+    <div class="icon">${c.icon}</div>
+    <h3>${escapeHtml(c.title) || "Card Title"}</h3>
+    <p>${escapeHtml(c.description) || "Card description"}</p>${link}
+  </${tag}>`;
+  })
+  .join("\n")}
+</div>`;
+      }
+
+      function generateAlertCode() {
+        const data = componentData.alert;
+        const styles = {
+          info: { bg: "#ebf8ff", border: "#3182ce", icon: "ℹ️" },
+          success: { bg: "#f0fff4", border: "#38a169", icon: "✅" },
+          warning: { bg: "#fffaf0", border: "#dd6b20", icon: "⚠️" },
+          error: { bg: "#fff5f5", border: "#e53e3e", icon: "❌" },
+        };
+        const s = styles[data.type];
+        return `<div style="background: ${s.bg}; border-left: 4px solid ${s.border}; padding: 20px; border-radius: 8px; display: flex; gap: 15px; align-items: flex-start;">
+    <span style="font-size: 24px;">${s.icon}</span>
+    <div>
+        <h4 style="margin: 0 0 5px 0; font-size: 16px; color: #333;">${escapeHtml(data.title) || "Alert Title"}</h4>
+        <p style="margin: 0; font-size: 14px; color: #666; line-height: 1.5;">${escapeHtml(data.content) || "Alert content"}</p>
+    </div>
+</div>`;
+      }
+
+      function generateNotificationCode() {
+        const data = componentData.notification;
+        const colors = {
+          info: { bg: "#ebf8ff", border: "#3182ce" },
+          success: { bg: "#f0fff4", border: "#38a169" },
+          warning: { bg: "#fffaf0", border: "#dd6b20" },
+          critical: { bg: "#fff5f5", border: "#e53e3e" },
+          neutral: { bg: "#f7fafc", border: "#718096" },
+        };
+        const c = colors[data.variant];
+        const link = data.linkUrl
+          ? `\n      <p style="margin-top: 10px;"><a href="${escapeHtml(data.linkUrl)}" style="color: ${c.border};">${escapeHtml(data.linkText) || "View details"}</a></p>`
+          : "";
+        const expiry = data.expiryDate
+          ? `\n      <span style="display: inline-block; padding: 2px 8px; background: rgba(0,0,0,0.1); border-radius: 4px; font-size: 11px; margin-top: 8px;">Expires: ${data.expiryDate}</span>`
+          : "";
+        const expiryScript = data.expiryDate
+          ? `\n\n<script>
+(function() {
+  var expiry = new Date("${data.expiryDate}");
+  if (new Date() > expiry) {
+    document.getElementById("notif-banner").style.display = "none";
+  }
+})();
+<\/script>`
+          : "";
+        return `<details id="notif-banner" style="background: ${c.bg}; border-left: 4px solid ${c.border}; border-radius: 8px; margin-bottom: 15px;">
+  <summary style="padding: 12px 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; list-style: none;">
+    <span style="font-size: 20px;">${data.emoji}</span>
+    <strong style="font-size: 14px;">${escapeHtml(data.title) || "Notification"}</strong>
+    <span style="font-size: 13px; color: #666; margin-left: 8px;">${escapeHtml(data.description)}</span>
+    <span style="margin-left: auto; font-size: 12px; color: #666;">▼ More</span>
+  </summary>
+  <div style="padding: 0 16px 16px 48px; font-size: 14px; line-height: 1.6;">
+    <p>${escapeHtml(data.expandedContent) || "Additional details..."}</p>${link}${expiry}
+  </div>
+</details>${expiryScript}`;
+      }
+
+      function generatePageNavCode() {
+        const data = componentData.pageNav;
+        const btnStyle =
+          data.style === "filled"
+            ? `background: ${data.color}; color: white; border: none;`
+            : `background: transparent; border: 2px solid ${data.color}; color: ${data.color};`;
+        let btns = [];
+        if (data.showPrevious)
+          btns.push(
+            `<a href="${escapeHtml(data.previousUrl) || "#"}" style="${btnStyle} padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">◀ ${escapeHtml(data.previousLabel)}</a>`,
+          );
+        if (data.showHome)
+          btns.push(
+            `<a href="${escapeHtml(data.homeUrl) || "#"}" style="${btnStyle} padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">🏠 ${escapeHtml(data.homeLabel)}</a>`,
+          );
+        if (data.showNext)
+          btns.push(
+            `<a href="${escapeHtml(data.nextUrl) || "#"}" style="${btnStyle} padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">${escapeHtml(data.nextLabel)} ▶</a>`,
+          );
+        return `<nav style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; gap: 12px;" aria-label="Page navigation">
+  ${btns.join("\n  ")}
+</nav>`;
+      }
+
+      function generateBackToTopCode() {
+        const data = componentData.backToTop;
+        const icons = { arrow: "▲", chevron: "⌃", text: "TOP" };
+        const radius =
+          data.shape === "circle"
+            ? "50%"
+            : data.shape === "rounded"
+              ? "8px"
+              : "0";
+        return `<style>
+.back-to-top-btn {
+  position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+  width: ${data.size}px; height: ${data.size}px;
+  background: ${data.bgColor}; color: ${data.iconColor};
+  border: none; border-radius: ${radius}; cursor: pointer;
+  font-size: ${data.icon === "text" ? "12px" : "20px"}; font-weight: 600;
+  opacity: 0; transition: opacity 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.back-to-top-btn.visible { opacity: 1; }
+.back-to-top-btn:hover { transform: scale(1.1); }
+</style>
+
+<button class="back-to-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+  ${icons[data.icon]}
+</button>
+
+<script>
+window.addEventListener("scroll", function() {
+  var btn = document.querySelector(".back-to-top-btn");
+  if (btn) btn.classList.toggle("visible", window.scrollY > 300);
+});
+<\/script>`;
+      }
+
+      function generateRaiseIdeaCode() {
+        const data = componentData.raiseIdea;
+        const floatStyle =
+          data.style === "floating"
+            ? " position: fixed; bottom: 20px; right: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);"
+            : "";
+        return `<a href="${escapeHtml(data.url) || "#"}" target="_blank" style="display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; background: ${data.bgColor}; color: ${data.textColor}; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px; transition: transform 0.2s;${floatStyle}" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+  <span style="font-size: 20px;">${data.emoji}</span>
+  <span>${escapeHtml(data.text)}</span>
+</a>`;
+      }
+
+      function generateChangeRequestCode() {
+        const data = componentData.changeRequest;
+        const floatStyle =
+          data.style === "floating"
+            ? " position: fixed; bottom: 20px; right: 80px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);"
+            : "";
+        return `<a href="${escapeHtml(data.url) || "#"}" target="_blank" style="display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; background: ${data.bgColor}; color: ${data.textColor}; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px; transition: transform 0.2s;${floatStyle}" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+  <span style="font-size: 20px;">${data.emoji}</span>
+  <span>${escapeHtml(data.text)}</span>
+</a>`;
+      }
+
+      function generateProgressCode() {
+        const data = componentData.progress;
+        const heights = { small: "8px", medium: "12px", large: "20px" };
+        const stripes =
+          data.style !== "solid"
+            ? `\n  background-image: linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%);\n  background-size: 1rem 1rem;`
+            : "";
+        const anim =
+          data.style === "animated"
+            ? "\n  animation: progress-stripes 1s linear infinite;"
+            : "";
+        const keyframes =
+          data.style === "animated"
+            ? "\n@keyframes progress-stripes { from { background-position: 1rem 0; } to { background-position: 0 0; } }"
+            : "";
+        return `<style>
+.progress-container { margin: 20px 0; }
+.progress-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
+.progress-label { font-weight: 600; color: #4a4a4a; }
+.progress-value { font-weight: 700; color: ${data.color}; }
+.progress-track { height: ${heights[data.size]}; background: #e2e8f0; border-radius: 6px; overflow: hidden; }
+.progress-fill { height: 100%; background: ${data.color}; border-radius: 6px; transition: width 0.5s;${stripes}${anim} }${keyframes}
+</style>
+
+<div class="progress-container">
+  <div class="progress-header">
+    <span class="progress-label">${escapeHtml(data.label)}</span>
+    ${data.showPercentage ? `<span class="progress-value">${data.percentage}%</span>` : ""}
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" style="width: ${data.percentage}%;"></div>
+  </div>
+</div>`;
+      }
+
+      // Initialize on load
+      window.onload = init;
+    </script>
+  </body>
+</html>
