@@ -1,0 +1,2519 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NDIA Confluence Component Builder - Professional Edition</title>
+    <style>
+      :root {
+        --primary-color: #00acc1;
+        --primary-hover: #0097a7;
+        --success-color: #48bb78;
+        --danger-color: #f56565;
+        --warning-color: #f9a825;
+        --info-color: #3182ce;
+        --neutral-dark: #4a4a4a;
+        --neutral-medium: #6e6e6e;
+        --neutral-light: #9e9e9e;
+        --neutral-lighter: #d0d0d0;
+        --bg-light: #f7fafc;
+        --bg-white: #ffffff;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+        --transition: all 0.2s ease;
+        --spacing-xs: 4px;
+        --spacing-sm: 8px;
+        --spacing-md: 16px;
+        --spacing-lg: 24px;
+        --spacing-xl: 32px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: var(--spacing-md);
+        color: var(--neutral-dark);
+      }
+
+      .app-container {
+        max-width: 1800px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 280px 1fr 1fr;
+        gap: var(--spacing-md);
+        align-items: start;
+      }
+
+      @media (max-width: 1400px) {
+        .app-container {
+          grid-template-columns: 1fr 1fr;
+        }
+        .sidebar-panel {
+          grid-column: 1 / -1;
+          max-height: 200px;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .app-container {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .panel {
+        background: var(--bg-white);
+        border-radius: 12px;
+        box-shadow: var(--shadow-lg);
+        overflow: hidden;
+      }
+
+      .panel-header {
+        padding: var(--spacing-lg);
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          #0097a7 100%
+        );
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .panel-header h1 {
+        font-size: 18px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+      }
+
+      .panel-body {
+        padding: var(--spacing-lg);
+        overflow-y: auto;
+        max-height: calc(100vh - 180px);
+      }
+
+      /* Component Type Selector */
+      .component-selector {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .component-type-btn {
+        padding: var(--spacing-md);
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        background: white;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-xs);
+      }
+
+      .component-type-btn:hover {
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+      }
+
+      .component-type-btn.active {
+        border-color: var(--primary-color);
+        background: rgba(0, 172, 193, 0.1);
+      }
+
+      .component-type-btn .icon {
+        font-size: 24px;
+      }
+      .component-type-btn .label {
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      /* Form Elements */
+      .form-group {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: 600;
+        color: var(--neutral-dark);
+        margin-bottom: var(--spacing-sm);
+        font-size: 14px;
+      }
+
+      .form-group input[type="text"],
+      .form-group input[type="number"],
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 13px;
+        transition: var(--transition);
+        font-family: inherit;
+      }
+
+      .form-group input[type="color"] {
+        width: 100%;
+        height: 45px;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0, 172, 193, 0.1);
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-md);
+      }
+
+      /* Buttons */
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+      }
+
+      .btn-primary {
+        background: var(--primary-color);
+        color: white;
+      }
+      .btn-primary:hover {
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+      }
+      .btn-success {
+        background: var(--success-color);
+        color: white;
+      }
+      .btn-danger {
+        background: var(--danger-color);
+        color: white;
+      }
+      .btn-secondary {
+        background: var(--neutral-lighter);
+        color: var(--neutral-dark);
+      }
+      .btn-sm {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* Tabs */
+      .tabs {
+        display: flex;
+        background: var(--bg-light);
+        border-bottom: 2px solid var(--border-color);
+      }
+
+      .tab {
+        flex: 1;
+        padding: var(--spacing-md);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--neutral-medium);
+        transition: var(--transition);
+      }
+
+      .tab.active {
+        color: var(--primary-color);
+        border-bottom: 3px solid var(--primary-color);
+        margin-bottom: -2px;
+      }
+
+      .tab-content {
+        padding: var(--spacing-md);
+        overflow-y: auto;
+        max-height: calc(100vh - 280px);
+      }
+
+      /* Code Output */
+      .code-output {
+        background: #1e1e1e;
+        color: #d4d4d4;
+        padding: var(--spacing-lg);
+        border-radius: 8px;
+        font-family: "Monaco", "Menlo", monospace;
+        font-size: 12px;
+        line-height: 1.6;
+        overflow-x: auto;
+        white-space: pre-wrap;
+      }
+
+      /* Card Items */
+      .card-item {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-md);
+      }
+
+      .card-item-header {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        margin-bottom: var(--spacing-md);
+        padding-bottom: var(--spacing-sm);
+        border-bottom: 2px solid var(--border-color);
+      }
+
+      .card-number {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+      }
+
+      /* Editor Styles */
+      .editor-container {
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .editor-container:focus-within {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0, 172, 193, 0.1);
+      }
+
+      .editor-toolbar {
+        background: var(--bg-light);
+        border-bottom: 1px solid var(--border-color);
+        padding: var(--spacing-sm);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+
+      .editor-btn {
+        background: white;
+        border: 1px solid var(--border-color);
+        padding: 6px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 500;
+        transition: var(--transition);
+      }
+
+      .editor-btn:hover {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+      }
+
+      .toolbar-separator {
+        width: 1px;
+        background: var(--border-color);
+        margin: 0 4px;
+      }
+
+      .editor-content {
+        min-height: 150px;
+        padding: var(--spacing-md);
+        outline: none;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .editor-content:empty::before {
+        content: attr(data-placeholder);
+        color: var(--neutral-light);
+      }
+
+      /* Confluence Macros in Editor */
+      .editor-content .confluence-macro {
+        background: #f0f5ff;
+        border: 2px dashed #0052cc;
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 12px;
+        white-space: pre-wrap;
+        cursor: default;
+      }
+
+      /* Modal Styles */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        padding: var(--spacing-md);
+      }
+
+      .modal-overlay.show {
+        display: flex;
+        overflow: auto;
+      }
+
+      body.modal-open {
+        overflow: hidden;
+      }
+
+      .modal {
+        background: white;
+        border-radius: 12px;
+        padding: var(--spacing-xl);
+        max-width: 500px;
+        width: 90%;
+        box-shadow: var(--shadow-lg);
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+      }
+
+      .modal-header {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .modal-header h2 {
+        font-size: 20px;
+        color: var(--neutral-dark);
+      }
+
+      .modal-body {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .modal-footer {
+        display: flex;
+        gap: var(--spacing-sm);
+        justify-content: flex-end;
+      }
+
+      /* Macro Grid */
+      .macro-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: var(--spacing-sm);
+        margin-top: var(--spacing-sm);
+      }
+
+      .macro-card {
+        background: white;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: var(--spacing-md);
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-sm);
+        text-align: center;
+      }
+
+      .macro-card:hover {
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+      }
+
+      .macro-card.selected {
+        border-color: var(--primary-color);
+        background: var(--bg-light);
+      }
+
+      .macro-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+      }
+
+      .macro-name {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--neutral-dark);
+      }
+
+      .macro-param-field {
+        margin-bottom: var(--spacing-md);
+      }
+
+      .macro-param-field label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: var(--spacing-xs);
+        color: var(--neutral-dark);
+      }
+
+      .macro-param-field input,
+      .macro-param-field textarea,
+      .macro-param-field select {
+        width: 100%;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border: 2px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 13px;
+        font-family: inherit;
+      }
+
+      .macro-param-field input:focus,
+      .macro-param-field textarea:focus,
+      .macro-param-field select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0, 172, 193, 0.1);
+      }
+
+      /* Notification */
+      .notification {
+        position: fixed;
+        top: var(--spacing-lg);
+        right: var(--spacing-lg);
+        padding: var(--spacing-md) var(--spacing-lg);
+        background: white;
+        border-radius: 8px;
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+        z-index: 100000;
+      }
+
+      .notification.show {
+        transform: translateX(0);
+      }
+      .notification.success {
+        border-left: 4px solid var(--success-color);
+      }
+      .notification.error {
+        border-left: 4px solid var(--danger-color);
+      }
+
+      /* ============================================ */
+      /* PREVIEW STYLES - BANNER                     */
+      /* ============================================ */
+      .preview-banner {
+        border-radius: 8px;
+        padding: 40px 30px;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .preview-banner h1 {
+        margin: 0 0 10px 0;
+        font-size: 28px;
+      }
+
+      .preview-banner p {
+        margin: 0 0 20px 0;
+        font-size: 16px;
+        opacity: 0.9;
+      }
+
+      .preview-banner .cta-btn {
+        display: inline-block;
+        padding: 12px 30px;
+        border-radius: 6px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--transition);
+      }
+
+      /* ============================================ */
+      /* PREVIEW STYLES - CARDS                      */
+      /* ============================================ */
+      .preview-cards {
+        display: grid;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .preview-card {
+        background: white;
+        border-radius: 8px;
+        padding: 25px;
+        box-shadow: var(--shadow-md);
+        text-align: center;
+        border-top: 4px solid;
+      }
+
+      .preview-card .card-icon {
+        font-size: 40px;
+        margin-bottom: 15px;
+      }
+
+      .preview-card h3 {
+        margin: 0 0 10px 0;
+        font-size: 18px;
+        color: var(--neutral-dark);
+      }
+
+      .preview-card p {
+        margin: 0;
+        color: var(--neutral-medium);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      /* ============================================ */
+      /* PREVIEW STYLES - ALERTS                     */
+      /* ============================================ */
+      .preview-alert {
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        display: flex;
+        gap: 15px;
+        align-items: flex-start;
+      }
+
+      .preview-alert .alert-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+      }
+
+      .preview-alert .alert-content h4 {
+        margin: 0 0 5px 0;
+        font-size: 16px;
+      }
+
+      .preview-alert .alert-content p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .preview-alert.info {
+        background: #ebf8ff;
+        border-left: 4px solid #3182ce;
+      }
+      .preview-alert.success {
+        background: #f0fff4;
+        border-left: 4px solid #38a169;
+      }
+      .preview-alert.warning {
+        background: #fffaf0;
+        border-left: 4px solid #dd6b20;
+      }
+      .preview-alert.error {
+        background: #fff5f5;
+        border-left: 4px solid #e53e3e;
+      }
+
+      /* ============================================ */
+      /* PREVIEW STYLES - TABS                       */
+      /* ============================================ */
+      .preview-tabs-container {
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+
+      .preview-tabs-header {
+        display: flex;
+        background: var(--bg-light);
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .preview-tab-btn {
+        padding: 12px 20px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--neutral-medium);
+        transition: var(--transition);
+      }
+
+      .preview-tab-btn.active {
+        background: white;
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--primary-color);
+      }
+
+      .preview-tab-content {
+        padding: 20px;
+        background: white;
+      }
+
+      /* ============================================ */
+      /* PREVIEW STYLES - ACCORDION                  */
+      /* ============================================ */
+      .colorful-accordion {
+        max-width: 900px;
+        margin: 20px 0;
+      }
+
+      .accordion-section {
+        margin-bottom: 10px;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .acc-checkbox {
+        display: none;
+      }
+
+      .acc-header {
+        color: white;
+        padding: 18px 20px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s ease;
+      }
+
+      .acc-header:hover {
+        filter: brightness(1.1);
+        padding-left: 25px;
+      }
+
+      .acc-icon {
+        font-size: 20px;
+        transition: transform 0.3s ease;
+        font-weight: bold;
+      }
+
+      .acc-checkbox:checked + .acc-header .acc-icon {
+        transform: rotate(180deg);
+      }
+
+      .acc-content-wrapper {
+        max-height: 0;
+        overflow: hidden;
+        transition:
+          max-height 0.4s ease,
+          padding 0.4s ease;
+        background: white;
+      }
+
+      .acc-checkbox:checked ~ .acc-content-wrapper {
+        max-height: 2000px;
+        padding: 20px;
+        border-left: 4px solid;
+      }
+
+      .acc-content {
+        color: #333;
+        line-height: 1.6;
+      }
+
+      .acc-content h3 {
+        margin-top: 15px;
+        margin-bottom: 10px;
+        font-size: 18px;
+      }
+
+      .acc-content h3:first-child {
+        margin-top: 0;
+      }
+
+      .acc-content p {
+        margin-bottom: 12px;
+      }
+
+      .acc-content ul {
+        margin-left: 20px;
+        margin-bottom: 12px;
+      }
+
+      .acc-content li {
+        margin-bottom: 6px;
+      }
+
+      .acc-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        border: 1px solid #ddd;
+      }
+
+      .acc-content table th {
+        background: #f8f9fa;
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        border: 1px solid #ddd;
+      }
+
+      .acc-content table td {
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+      }
+
+      .acc-content table tr:nth-child(even) {
+        background: #f8f9fa;
+      }
+
+      .highlight-box {
+        background: #f8f9fa;
+        border-left: 4px solid #7cb342;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 4px;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: var(--spacing-xl);
+        color: var(--neutral-medium);
+      }
+
+      .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: var(--spacing-md);
+        opacity: 0.5;
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg-light);
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--neutral-lighter);
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--neutral-light);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Sidebar Panel -->
+      <div class="panel sidebar-panel">
+        <div class="panel-header">
+          <h1>🧩 Components</h1>
+        </div>
+        <div class="panel-body">
+          <div class="component-selector">
+            <button class="component-type-btn active" data-type="accordion">
+              <span class="icon">📚</span>
+              <span class="label">Accordion</span>
+            </button>
+            <button class="component-type-btn" data-type="banner">
+              <span class="icon">🎯</span>
+              <span class="label">Banner</span>
+            </button>
+            <button class="component-type-btn" data-type="cards">
+              <span class="icon">🃏</span>
+              <span class="label">Card Grid</span>
+            </button>
+            <button class="component-type-btn" data-type="alert">
+              <span class="icon">⚠️</span>
+              <span class="label">Alert Box</span>
+            </button>
+            <button class="component-type-btn" data-type="tabs">
+              <span class="icon">📑</span>
+              <span class="label">Tab Panel</span>
+            </button>
+            <button class="component-type-btn" data-type="divider">
+              <span class="icon">➖</span>
+              <span class="label">Divider</span>
+            </button>
+          </div>
+          <button
+            class="btn btn-primary btn-sm"
+            style="width: 100%"
+            id="saveTemplateBtn"
+          >
+            💾 Save as Template
+          </button>
+        </div>
+      </div>
+
+      <!-- Builder Panel -->
+      <div class="panel builder-panel">
+        <div class="panel-header">
+          <h1>🛠️ Builder</h1>
+          <div style="display: flex; gap: 8px">
+            <button class="btn btn-danger btn-sm" id="resetBtn">
+              🔄 Reset
+            </button>
+          </div>
+        </div>
+        <div class="panel-body" id="builderContent">
+          <!-- Dynamic builder content -->
+        </div>
+      </div>
+
+      <!-- Preview Panel -->
+      <div class="panel preview-panel">
+        <div class="panel-header">
+          <h1>👁️ Preview</h1>
+          <div style="display: flex; gap: 8px">
+            <button class="btn btn-success btn-sm" id="generateCodeBtn">
+              ⚡ Generate
+            </button>
+            <button class="btn btn-primary btn-sm" id="copyCodeBtn">
+              📋 Copy
+            </button>
+          </div>
+        </div>
+        <div class="tabs">
+          <button class="tab active" data-tab="preview">Preview</button>
+          <button class="tab" data-tab="code">Code</button>
+        </div>
+        <div class="tab-content" id="previewView">
+          <div id="previewContainer">
+            <div class="empty-state">
+              <div class="empty-state-icon">📋</div>
+              <p>Configure your component to see preview</p>
+            </div>
+          </div>
+        </div>
+        <div class="tab-content" id="codeView" style="display: none">
+          <div class="code-output" id="codeOutput">
+            // Click "Generate" to see the HTML output
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table Builder Modal -->
+    <div class="modal-overlay" id="tableModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Insert Table</h2>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Number of Rows</label>
+            <input type="number" id="tableRows" min="1" max="20" value="3" />
+          </div>
+          <div class="form-group">
+            <label>Number of Columns</label>
+            <input type="number" id="tableCols" min="1" max="10" value="3" />
+          </div>
+          <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 8px">
+              <input type="checkbox" id="tableHeader" checked />
+              Include header row
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="closeTableModalBtn">
+            Cancel
+          </button>
+          <button class="btn btn-primary" id="insertTableBtn">
+            Insert Table
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confluence Macro Modal -->
+    <div class="modal-overlay" id="macroModal">
+      <div class="modal" style="max-width: 700px">
+        <div class="modal-header">
+          <h2>Insert Confluence Macro</h2>
+          <p
+            style="
+              font-size: 13px;
+              color: var(--neutral-medium);
+              margin-top: 8px;
+            "
+          >
+            Select a common macro or enter custom macro code
+          </p>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Quick Select Popular Macros</label>
+            <div class="macro-grid" id="macroGrid">
+              <button class="macro-card" data-macro-type="info">
+                <div class="macro-icon" style="background: #e3fcef">ℹ️</div>
+                <div class="macro-name">Info</div>
+              </button>
+              <button class="macro-card" data-macro-type="warning">
+                <div class="macro-icon" style="background: #fff4e6">⚠️</div>
+                <div class="macro-name">Warning</div>
+              </button>
+              <button class="macro-card" data-macro-type="tip">
+                <div class="macro-icon" style="background: #e6f7ff">💡</div>
+                <div class="macro-name">Tip</div>
+              </button>
+              <button class="macro-card" data-macro-type="note">
+                <div class="macro-icon" style="background: #fff0f6">📝</div>
+                <div class="macro-name">Note</div>
+              </button>
+              <button class="macro-card" data-macro-type="expand">
+                <div class="macro-icon" style="background: #f0f0f0">📂</div>
+                <div class="macro-name">Expand</div>
+              </button>
+              <button class="macro-card" data-macro-type="status">
+                <div class="macro-icon" style="background: #e6f4ff">✓</div>
+                <div class="macro-name">Status</div>
+              </button>
+              <button class="macro-card" data-macro-type="toc">
+                <div class="macro-icon" style="background: #fff7e6">📑</div>
+                <div class="macro-name">Table of Contents</div>
+              </button>
+              <button class="macro-card" data-macro-type="code">
+                <div class="macro-icon" style="background: #f6f6f6">💻</div>
+                <div class="macro-name">Code Block</div>
+              </button>
+              <button class="macro-card" data-macro-type="panel">
+                <div class="macro-icon" style="background: #f0f5ff">📋</div>
+                <div class="macro-name">Panel</div>
+              </button>
+              <button class="macro-card" data-macro-type="quote">
+                <div class="macro-icon" style="background: #fafafa">💬</div>
+                <div class="macro-name">Quote</div>
+              </button>
+              <button class="macro-card" data-macro-type="jira">
+                <div class="macro-icon" style="background: #deebff">🎫</div>
+                <div class="macro-name">Jira Issue</div>
+              </button>
+              <button class="macro-card" data-macro-type="attachments">
+                <div class="macro-icon" style="background: #e3fcef">📎</div>
+                <div class="macro-name">Attachments</div>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group" id="macroParameters" style="display: none">
+            <label id="macroParamLabel">Macro Parameters</label>
+            <div id="macroParamFields"></div>
+          </div>
+
+          <div class="form-group">
+            <label>
+              Or Enter Custom Macro Code
+              <span
+                style="
+                  font-size: 11px;
+                  font-weight: 400;
+                  color: var(--neutral-medium);
+                "
+                >(Advanced)</span
+              >
+            </label>
+            <textarea
+              id="customMacroCode"
+              placeholder="Paste Confluence macro code here..."
+              style="font-family: monospace; min-height: 120px"
+            ></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="closeMacroModalBtn">
+            Cancel
+          </button>
+          <button class="btn btn-primary" id="insertMacroBtn">
+            Insert Macro
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+      <div id="notificationText">Success!</div>
+    </div>
+
+    <script>
+      // ============================================================================
+      // STATE
+      // ============================================================================
+      let currentComponent = "accordion";
+      let componentData = {
+        accordion: { sections: [] },
+        banner: {
+          title: "",
+          subtitle: "",
+          bgColor: "#6B2976",
+          textColor: "#ffffff",
+          ctaText: "",
+          ctaUrl: "",
+          ctaColor: "#ffffff",
+        },
+        cards: { columns: 3, cards: [] },
+        alert: { type: "info", title: "", content: "" },
+        tabs: { tabs: [] },
+        divider: { style: "solid", color: "#e2e8f0", thickness: 2 },
+      };
+
+      const defaultColors = [
+        "#6B2976",
+        "#7CB342",
+        "#FF6B6B",
+        "#4ECDC4",
+        "#FFA500",
+        "#9B59B6",
+      ];
+
+      let currentEditorIndex = null;
+      let selectedMacroType = null;
+
+      // ============================================================================
+      // MACRO TEMPLATES
+      // ============================================================================
+      const macroTemplates = {
+        info: {
+          name: "Info Panel",
+          params: [
+            {
+              name: "title",
+              label: "Title (optional)",
+              type: "text",
+              default: "Information",
+            },
+          ],
+          template: (params) =>
+            `<ac:structured-macro ac:name="info"><ac:parameter ac:name="title">${escapeHtml(params.title) || "Information"}</ac:parameter><ac:rich-text-body><p>Add your information here</p></ac:rich-text-body></ac:structured-macro>`,
+        },
+        warning: {
+          name: "Warning Panel",
+          params: [
+            {
+              name: "title",
+              label: "Title (optional)",
+              type: "text",
+              default: "Warning",
+            },
+          ],
+          template: (params) =>
+            `<ac:structured-macro ac:name="warning"><ac:parameter ac:name="title">${escapeHtml(params.title) || "Warning"}</ac:parameter><ac:rich-text-body><p>Add your warning message here</p></ac:rich-text-body></ac:structured-macro>`,
+        },
+        tip: {
+          name: "Tip Panel",
+          params: [
+            {
+              name: "title",
+              label: "Title (optional)",
+              type: "text",
+              default: "Tip",
+            },
+          ],
+          template: (params) =>
+            `<ac:structured-macro ac:name="tip"><ac:parameter ac:name="title">${escapeHtml(params.title) || "Tip"}</ac:parameter><ac:rich-text-body><p>Add your tip here</p></ac:rich-text-body></ac:structured-macro>`,
+        },
+        note: {
+          name: "Note Panel",
+          params: [
+            {
+              name: "title",
+              label: "Title (optional)",
+              type: "text",
+              default: "Note",
+            },
+          ],
+          template: (params) =>
+            `<ac:structured-macro ac:name="note"><ac:parameter ac:name="title">${escapeHtml(params.title) || "Note"}</ac:parameter><ac:rich-text-body><p>Add your note here</p></ac:rich-text-body></ac:structured-macro>`,
+        },
+        expand: {
+          name: "Expand",
+          params: [
+            {
+              name: "title",
+              label: "Expand Title",
+              type: "text",
+              default: "Click to expand...",
+            },
+          ],
+          template: (params) =>
+            `<ac:structured-macro ac:name="expand"><ac:parameter ac:name="title">${escapeHtml(params.title) || "Click to expand..."}</ac:parameter><ac:rich-text-body><p>Hidden content goes here</p></ac:rich-text-body></ac:structured-macro>`,
+        },
+        status: {
+          name: "Status",
+          params: [
+            {
+              name: "title",
+              label: "Status Text",
+              type: "text",
+              default: "IN PROGRESS",
+            },
+            {
+              name: "colour",
+              label: "Color",
+              type: "select",
+              options: ["Grey", "Red", "Yellow", "Green", "Blue"],
+              default: "Blue",
+            },
+          ],
+          template: (params) =>
+            `<ac:structured-macro ac:name="status"><ac:parameter ac:name="colour">${params.colour || "Blue"}</ac:parameter><ac:parameter ac:name="title">${escapeHtml(params.title) || "IN PROGRESS"}</ac:parameter></ac:structured-macro>`,
+        },
+        toc: {
+          name: "Table of Contents",
+          params: [
+            {
+              name: "maxLevel",
+              label: "Max Heading Level",
+              type: "number",
+              default: "3",
+            },
+          ],
+          template: (params) =>
+            `<ac:structured-macro ac:name="toc"><ac:parameter ac:name="maxLevel">${params.maxLevel || "3"}</ac:parameter></ac:structured-macro>`,
+        },
+        code: {
+          name: "Code Block",
+          params: [
+            {
+              name: "language",
+              label: "Language",
+              type: "select",
+              options: [
+                "none",
+                "java",
+                "javascript",
+                "python",
+                "sql",
+                "xml",
+                "html",
+                "css",
+                "bash",
+                "powershell",
+              ],
+              default: "none",
+            },
+            {
+              name: "title",
+              label: "Title (optional)",
+              type: "text",
+              default: "",
+            },
+          ],
+          template: (params) =>
+            `<ac:structured-macro ac:name="code"><ac:parameter ac:name="language">${params.language || "none"}</ac:parameter>${params.title ? `<ac:parameter ac:name="title">${escapeHtml(params.title)}</ac:parameter>` : ""}<ac:plain-text-body><![CDATA[// Your code here]]></ac:plain-text-body></ac:structured-macro>`,
+        },
+        panel: {
+          name: "Panel",
+          params: [
+            { name: "title", label: "Panel Title", type: "text", default: "" },
+            {
+              name: "borderColor",
+              label: "Border Color",
+              type: "color",
+              default: "#cccccc",
+            },
+          ],
+          template: (params) =>
+            `<ac:structured-macro ac:name="panel"><ac:parameter ac:name="borderStyle">solid</ac:parameter><ac:parameter ac:name="borderColor">${params.borderColor || "#cccccc"}</ac:parameter>${params.title ? `<ac:parameter ac:name="titleBGColor">#F7F7F7</ac:parameter><ac:parameter ac:name="title">${escapeHtml(params.title)}</ac:parameter>` : ""}<ac:rich-text-body><p>Panel content here</p></ac:rich-text-body></ac:structured-macro>`,
+        },
+        quote: {
+          name: "Quote",
+          params: [],
+          template: (params) =>
+            `<ac:structured-macro ac:name="quote"><ac:rich-text-body><p>Your quote here</p></ac:rich-text-body></ac:structured-macro>`,
+        },
+        jira: {
+          name: "Jira Issue",
+          params: [
+            {
+              name: "key",
+              label: "Issue Key (e.g., PROJ-123)",
+              type: "text",
+              default: "PROJ-123",
+            },
+          ],
+          template: (params) =>
+            `<ac:structured-macro ac:name="jira"><ac:parameter ac:name="key">${escapeHtml(params.key) || "PROJ-123"}</ac:parameter></ac:structured-macro>`,
+        },
+        attachments: {
+          name: "Attachments",
+          params: [],
+          template: (params) => `<ac:structured-macro ac:name="attachments" />`,
+        },
+      };
+
+      // ============================================================================
+      // UTILITY FUNCTIONS
+      // ============================================================================
+      function escapeHtml(text) {
+        if (!text) return "";
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function encodeMacroCode(macroCode) {
+        return btoa(encodeURIComponent(macroCode));
+      }
+
+      function decodeMacroCode(encodedCode) {
+        try {
+          return decodeURIComponent(atob(encodedCode));
+        } catch (e) {
+          console.error("Failed to decode macro code:", e);
+          return "";
+        }
+      }
+
+      function processContentForOutput(htmlContent) {
+        if (!htmlContent) return "";
+
+        const temp = document.createElement("div");
+        temp.innerHTML = htmlContent;
+
+        const macroDivs = temp.querySelectorAll(
+          ".confluence-macro[data-macro-code]",
+        );
+        macroDivs.forEach((macroDiv) => {
+          const encodedMacroCode = macroDiv.getAttribute("data-macro-code");
+          if (encodedMacroCode) {
+            const macroCode = decodeMacroCode(encodedMacroCode);
+            if (macroCode) {
+              const macroPlaceholder = document.createTextNode(macroCode);
+              macroDiv.parentNode.replaceChild(macroPlaceholder, macroDiv);
+            }
+          }
+        });
+
+        return temp.innerHTML;
+      }
+
+      // ============================================================================
+      // INITIALIZATION
+      // ============================================================================
+      function init() {
+        // Component type selector
+        document.querySelectorAll(".component-type-btn").forEach((btn) => {
+          btn.addEventListener("click", () =>
+            selectComponent(btn.dataset.type),
+          );
+        });
+
+        // Tab switching
+        document.querySelectorAll(".tab").forEach((tab) => {
+          tab.addEventListener("click", () => switchTab(tab.dataset.tab));
+        });
+
+        // Action buttons
+        document
+          .getElementById("resetBtn")
+          .addEventListener("click", resetComponent);
+        document
+          .getElementById("generateCodeBtn")
+          .addEventListener("click", generateCode);
+        document
+          .getElementById("copyCodeBtn")
+          .addEventListener("click", copyCode);
+        document
+          .getElementById("saveTemplateBtn")
+          .addEventListener("click", saveTemplate);
+
+        // Modal buttons
+        document
+          .getElementById("closeTableModalBtn")
+          .addEventListener("click", closeTableModal);
+        document
+          .getElementById("insertTableBtn")
+          .addEventListener("click", insertTable);
+        document
+          .getElementById("closeMacroModalBtn")
+          .addEventListener("click", closeMacroModal);
+        document
+          .getElementById("insertMacroBtn")
+          .addEventListener("click", insertMacro);
+
+        // Macro card clicks
+        document.querySelectorAll(".macro-card").forEach((card) => {
+          card.addEventListener("click", () =>
+            selectMacro(card.dataset.macroType, card),
+          );
+        });
+
+        // Escape key closes modals
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            closeTableModal();
+            closeMacroModal();
+          }
+        });
+
+        // Load initial component
+        renderBuilder();
+        updatePreview();
+      }
+
+      // ============================================================================
+      // COMPONENT SELECTION
+      // ============================================================================
+      function selectComponent(type) {
+        currentComponent = type;
+        document.querySelectorAll(".component-type-btn").forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.type === type);
+        });
+        renderBuilder();
+        updatePreview();
+      }
+
+      // ============================================================================
+      // BUILDER RENDERERS
+      // ============================================================================
+      function renderBuilder() {
+        const container = document.getElementById("builderContent");
+
+        switch (currentComponent) {
+          case "accordion":
+            renderAccordionBuilder(container);
+            break;
+          case "banner":
+            renderBannerBuilder(container);
+            break;
+          case "cards":
+            renderCardsBuilder(container);
+            break;
+          case "alert":
+            renderAlertBuilder(container);
+            break;
+          case "tabs":
+            renderTabsBuilder(container);
+            break;
+          case "divider":
+            renderDividerBuilder(container);
+            break;
+        }
+      }
+
+      function renderAccordionBuilder(container) {
+        const data = componentData.accordion;
+        container.innerHTML = `
+        <div class="form-group">
+            <label>Number of Sections</label>
+            <div style="display: flex; gap: 8px;">
+                <input type="number" id="sectionCount" min="1" max="20" value="${data.sections.length || 3}">
+                <button class="btn btn-primary" id="generateSectionsBtn">⚡ Generate</button>
+            </div>
+        </div>
+        <div id="accordionSections"></div>
+    `;
+
+        document
+          .getElementById("generateSectionsBtn")
+          .addEventListener("click", generateAccordionSections);
+        renderAccordionSections();
+      }
+
+      function generateAccordionSections() {
+        const count =
+          parseInt(document.getElementById("sectionCount").value) || 3;
+        const data = componentData.accordion;
+
+        while (data.sections.length < count) {
+          data.sections.push({
+            title: "",
+            color: defaultColors[data.sections.length % defaultColors.length],
+            content: "",
+          });
+        }
+        data.sections = data.sections.slice(0, count);
+
+        renderAccordionSections();
+        updatePreview();
+      }
+
+      function renderAccordionSections() {
+        const container = document.getElementById("accordionSections");
+        if (!container) return;
+
+        const data = componentData.accordion;
+        if (data.sections.length === 0) {
+          container.innerHTML =
+            '<div class="empty-state"><p>Click Generate to create sections</p></div>';
+          return;
+        }
+
+        container.innerHTML = data.sections
+          .map(
+            (section, i) => `
+        <div class="card-item">
+            <div class="card-item-header">
+                <div class="card-number" style="background: ${section.color}">${i + 1}</div>
+                <input type="text" class="section-title" data-index="${i}" placeholder="Section title..." value="${escapeHtml(section.title)}" style="flex: 1; margin-right: 8px;">
+                <input type="color" class="section-color" data-index="${i}" value="${section.color}" style="width: 40px; height: 30px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <div class="editor-container">
+                    <div class="editor-toolbar">
+                        <button class="editor-btn" data-command="bold"><strong>B</strong></button>
+                        <button class="editor-btn" data-command="italic"><em>I</em></button>
+                        <button class="editor-btn" data-command="underline"><u>U</u></button>
+                        <div class="toolbar-separator"></div>
+                        <button class="editor-btn" data-command="formatBlock" data-value="h3">H3</button>
+                        <button class="editor-btn" data-command="formatBlock" data-value="p">P</button>
+                        <div class="toolbar-separator"></div>
+                        <button class="editor-btn" data-command="insertUnorderedList">• List</button>
+                        <button class="editor-btn" data-command="insertOrderedList">1. List</button>
+                        <div class="toolbar-separator"></div>
+                        <button class="editor-btn" data-command="highlight">💡 Highlight</button>
+                        <button class="editor-btn" data-command="createLink">🔗 Link</button>
+                        <div class="toolbar-separator"></div>
+                        <button class="editor-btn table-modal-btn" data-section-index="${i}">📊 Table</button>
+                        <button class="editor-btn macro-modal-btn" data-section-index="${i}">🔌 Macro</button>
+                    </div>
+                    <div class="editor-content section-content" id="editor-${i}" data-index="${i}" contenteditable="true" data-placeholder="Enter content...">${section.content}</div>
+                </div>
+            </div>
+        </div>
+    `,
+          )
+          .join("");
+
+        // Add event listeners
+        container.querySelectorAll(".section-title").forEach((input) => {
+          input.addEventListener("input", (e) => {
+            componentData.accordion.sections[e.target.dataset.index].title =
+              e.target.value;
+            updatePreview();
+          });
+        });
+
+        container.querySelectorAll(".section-color").forEach((input) => {
+          input.addEventListener("change", (e) => {
+            componentData.accordion.sections[e.target.dataset.index].color =
+              e.target.value;
+            updatePreview();
+          });
+        });
+
+        container.querySelectorAll(".section-content").forEach((editor) => {
+          editor.addEventListener("input", (e) => {
+            componentData.accordion.sections[e.target.dataset.index].content =
+              e.target.innerHTML;
+            updatePreview();
+          });
+        });
+
+        container.querySelectorAll(".editor-btn").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            // Handle table modal
+            if (btn.classList.contains("table-modal-btn")) {
+              openTableModal(parseInt(btn.dataset.sectionIndex));
+              return;
+            }
+
+            // Handle macro modal
+            if (btn.classList.contains("macro-modal-btn")) {
+              openMacroModal(parseInt(btn.dataset.sectionIndex));
+              return;
+            }
+
+            const command = btn.dataset.command;
+            const value = btn.dataset.value || null;
+
+            if (command === "createLink") {
+              const url = prompt("Enter URL:");
+              if (url) document.execCommand(command, false, url);
+            } else if (command === "highlight") {
+              const highlightHTML =
+                '<div class="highlight-box"><strong>Important:</strong><p>Add your important information here</p></div>';
+              document.execCommand("insertHTML", false, highlightHTML);
+            } else if (command) {
+              document.execCommand(command, false, value);
+            }
+          });
+        });
+      }
+
+      function renderBannerBuilder(container) {
+        const data = componentData.banner;
+        container.innerHTML = `
+        <div class="form-group">
+            <label>Banner Title</label>
+            <input type="text" id="bannerTitle" value="${escapeHtml(data.title)}" placeholder="Welcome to Our Page">
+        </div>
+        <div class="form-group">
+            <label>Subtitle</label>
+            <input type="text" id="bannerSubtitle" value="${escapeHtml(data.subtitle)}" placeholder="A brief description here">
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Background Color</label>
+                <input type="color" id="bannerBgColor" value="${data.bgColor}">
+            </div>
+            <div class="form-group">
+                <label>Text Color</label>
+                <input type="color" id="bannerTextColor" value="${data.textColor}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>CTA Button Text (optional)</label>
+            <input type="text" id="bannerCtaText" value="${escapeHtml(data.ctaText)}" placeholder="Learn More">
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>CTA URL</label>
+                <input type="text" id="bannerCtaUrl" value="${escapeHtml(data.ctaUrl)}" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>CTA Button Color</label>
+                <input type="color" id="bannerCtaColor" value="${data.ctaColor}">
+            </div>
+        </div>
+    `;
+
+        [
+          "bannerTitle",
+          "bannerSubtitle",
+          "bannerBgColor",
+          "bannerTextColor",
+          "bannerCtaText",
+          "bannerCtaUrl",
+          "bannerCtaColor",
+        ].forEach((id) => {
+          document.getElementById(id).addEventListener("input", (e) => {
+            const key = id.replace("banner", "").toLowerCase();
+            const dataKey =
+              key === "bgcolor"
+                ? "bgColor"
+                : key === "textcolor"
+                  ? "textColor"
+                  : key === "ctatext"
+                    ? "ctaText"
+                    : key === "ctaurl"
+                      ? "ctaUrl"
+                      : key === "ctacolor"
+                        ? "ctaColor"
+                        : key;
+            componentData.banner[dataKey] = e.target.value;
+            updatePreview();
+          });
+        });
+      }
+
+      function renderCardsBuilder(container) {
+        const data = componentData.cards;
+        container.innerHTML = `
+        <div class="form-row">
+            <div class="form-group">
+                <label>Number of Cards</label>
+                <input type="number" id="cardCount" min="1" max="12" value="${data.cards.length || 3}">
+            </div>
+            <div class="form-group">
+                <label>Columns</label>
+                <select id="cardColumns">
+                    <option value="2" ${data.columns === 2 ? "selected" : ""}>2 Columns</option>
+                    <option value="3" ${data.columns === 3 ? "selected" : ""}>3 Columns</option>
+                    <option value="4" ${data.columns === 4 ? "selected" : ""}>4 Columns</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn btn-primary" id="generateCardsBtn" style="width: 100%; margin-bottom: 16px;">⚡ Generate Cards</button>
+        <div id="cardsContainer"></div>
+    `;
+
+        document
+          .getElementById("generateCardsBtn")
+          .addEventListener("click", generateCards);
+        document
+          .getElementById("cardColumns")
+          .addEventListener("change", (e) => {
+            componentData.cards.columns = parseInt(e.target.value);
+            updatePreview();
+          });
+        renderCards();
+      }
+
+      function generateCards() {
+        const count = parseInt(document.getElementById("cardCount").value) || 3;
+        const data = componentData.cards;
+
+        while (data.cards.length < count) {
+          data.cards.push({
+            icon: "⭐",
+            title: "",
+            description: "",
+            color: defaultColors[data.cards.length % defaultColors.length],
+          });
+        }
+        data.cards = data.cards.slice(0, count);
+
+        renderCards();
+        updatePreview();
+      }
+
+      function renderCards() {
+        const container = document.getElementById("cardsContainer");
+        if (!container) return;
+
+        const data = componentData.cards;
+        if (data.cards.length === 0) {
+          container.innerHTML =
+            '<div class="empty-state"><p>Click Generate to create cards</p></div>';
+          return;
+        }
+
+        container.innerHTML = data.cards
+          .map(
+            (card, i) => `
+        <div class="card-item">
+            <div class="card-item-header">
+                <div class="card-number" style="background: ${card.color}">${i + 1}</div>
+                <input type="text" class="card-icon" data-index="${i}" value="${card.icon}" style="width: 50px; text-align: center; font-size: 20px;">
+                <input type="color" class="card-color" data-index="${i}" value="${card.color}" style="width: 40px; height: 30px;">
+            </div>
+            <div class="form-group">
+                <input type="text" class="card-title" data-index="${i}" placeholder="Card Title" value="${escapeHtml(card.title)}">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <textarea class="card-desc" data-index="${i}" placeholder="Card description..." rows="2">${escapeHtml(card.description)}</textarea>
+            </div>
+        </div>
+    `,
+          )
+          .join("");
+
+        container.querySelectorAll(".card-icon").forEach((input) => {
+          input.addEventListener("input", (e) => {
+            componentData.cards.cards[e.target.dataset.index].icon =
+              e.target.value;
+            updatePreview();
+          });
+        });
+
+        container.querySelectorAll(".card-color").forEach((input) => {
+          input.addEventListener("change", (e) => {
+            componentData.cards.cards[e.target.dataset.index].color =
+              e.target.value;
+            updatePreview();
+          });
+        });
+
+        container.querySelectorAll(".card-title").forEach((input) => {
+          input.addEventListener("input", (e) => {
+            componentData.cards.cards[e.target.dataset.index].title =
+              e.target.value;
+            updatePreview();
+          });
+        });
+
+        container.querySelectorAll(".card-desc").forEach((input) => {
+          input.addEventListener("input", (e) => {
+            componentData.cards.cards[e.target.dataset.index].description =
+              e.target.value;
+            updatePreview();
+          });
+        });
+      }
+
+      function renderAlertBuilder(container) {
+        const data = componentData.alert;
+        container.innerHTML = `
+        <div class="form-group">
+            <label>Alert Type</label>
+            <select id="alertType">
+                <option value="info" ${data.type === "info" ? "selected" : ""}>ℹ️ Info</option>
+                <option value="success" ${data.type === "success" ? "selected" : ""}>✅ Success</option>
+                <option value="warning" ${data.type === "warning" ? "selected" : ""}>⚠️ Warning</option>
+                <option value="error" ${data.type === "error" ? "selected" : ""}>❌ Error</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Title</label>
+            <input type="text" id="alertTitle" value="${escapeHtml(data.title)}" placeholder="Alert Title">
+        </div>
+        <div class="form-group">
+            <label>Content</label>
+            <textarea id="alertContent" rows="4" placeholder="Alert message content...">${escapeHtml(data.content)}</textarea>
+        </div>
+    `;
+
+        document.getElementById("alertType").addEventListener("change", (e) => {
+          componentData.alert.type = e.target.value;
+          updatePreview();
+        });
+
+        document.getElementById("alertTitle").addEventListener("input", (e) => {
+          componentData.alert.title = e.target.value;
+          updatePreview();
+        });
+
+        document
+          .getElementById("alertContent")
+          .addEventListener("input", (e) => {
+            componentData.alert.content = e.target.value;
+            updatePreview();
+          });
+      }
+
+      function renderTabsBuilder(container) {
+        const data = componentData.tabs;
+        container.innerHTML = `
+        <div class="form-group">
+            <label>Number of Tabs</label>
+            <div style="display: flex; gap: 8px;">
+                <input type="number" id="tabCount" min="2" max="8" value="${data.tabs.length || 3}">
+                <button class="btn btn-primary" id="generateTabsBtn">⚡ Generate</button>
+            </div>
+        </div>
+        <div id="tabsContainer"></div>
+    `;
+
+        document
+          .getElementById("generateTabsBtn")
+          .addEventListener("click", generateTabs);
+        renderTabItems();
+      }
+
+      function generateTabs() {
+        const count = parseInt(document.getElementById("tabCount").value) || 3;
+        const data = componentData.tabs;
+
+        while (data.tabs.length < count) {
+          data.tabs.push({ title: `Tab ${data.tabs.length + 1}`, content: "" });
+        }
+        data.tabs = data.tabs.slice(0, count);
+
+        renderTabItems();
+        updatePreview();
+      }
+
+      function renderTabItems() {
+        const container = document.getElementById("tabsContainer");
+        if (!container) return;
+
+        const data = componentData.tabs;
+        if (data.tabs.length === 0) {
+          container.innerHTML =
+            '<div class="empty-state"><p>Click Generate to create tabs</p></div>';
+          return;
+        }
+
+        container.innerHTML = data.tabs
+          .map(
+            (tab, i) => `
+        <div class="card-item">
+            <div class="form-group">
+                <label>Tab ${i + 1} Title</label>
+                <input type="text" class="tab-title" data-index="${i}" value="${escapeHtml(tab.title)}">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>Content</label>
+                <textarea class="tab-content-input" data-index="${i}" rows="3">${escapeHtml(tab.content)}</textarea>
+            </div>
+        </div>
+    `,
+          )
+          .join("");
+
+        container.querySelectorAll(".tab-title").forEach((input) => {
+          input.addEventListener("input", (e) => {
+            componentData.tabs.tabs[e.target.dataset.index].title =
+              e.target.value;
+            updatePreview();
+          });
+        });
+
+        container.querySelectorAll(".tab-content-input").forEach((input) => {
+          input.addEventListener("input", (e) => {
+            componentData.tabs.tabs[e.target.dataset.index].content =
+              e.target.value;
+            updatePreview();
+          });
+        });
+      }
+
+      function renderDividerBuilder(container) {
+        const data = componentData.divider;
+        container.innerHTML = `
+        <div class="form-group">
+            <label>Style</label>
+            <select id="dividerStyle">
+                <option value="solid" ${data.style === "solid" ? "selected" : ""}>Solid</option>
+                <option value="dashed" ${data.style === "dashed" ? "selected" : ""}>Dashed</option>
+                <option value="dotted" ${data.style === "dotted" ? "selected" : ""}>Dotted</option>
+                <option value="double" ${data.style === "double" ? "selected" : ""}>Double</option>
+            </select>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Color</label>
+                <input type="color" id="dividerColor" value="${data.color}">
+            </div>
+            <div class="form-group">
+                <label>Thickness (px)</label>
+                <input type="number" id="dividerThickness" min="1" max="10" value="${data.thickness}">
+            </div>
+        </div>
+    `;
+
+        document
+          .getElementById("dividerStyle")
+          .addEventListener("change", (e) => {
+            componentData.divider.style = e.target.value;
+            updatePreview();
+          });
+
+        document
+          .getElementById("dividerColor")
+          .addEventListener("input", (e) => {
+            componentData.divider.color = e.target.value;
+            updatePreview();
+          });
+
+        document
+          .getElementById("dividerThickness")
+          .addEventListener("input", (e) => {
+            componentData.divider.thickness = parseInt(e.target.value) || 2;
+            updatePreview();
+          });
+      }
+
+      // ============================================================================
+      // TABLE MODAL FUNCTIONS
+      // ============================================================================
+      function openTableModal(editorIndex) {
+        currentEditorIndex = editorIndex;
+        const modal = document.getElementById("tableModal");
+        modal.classList.add("show");
+        document.body.classList.add("modal-open");
+
+        modal.onclick = function (e) {
+          if (e.target === modal) closeTableModal();
+        };
+      }
+
+      function closeTableModal() {
+        document.getElementById("tableModal").classList.remove("show");
+        document.body.classList.remove("modal-open");
+        currentEditorIndex = null;
+      }
+
+      function insertTable() {
+        const rows = parseInt(document.getElementById("tableRows").value) || 3;
+        const cols = parseInt(document.getElementById("tableCols").value) || 3;
+        const hasHeader = document.getElementById("tableHeader").checked;
+
+        let tableHTML = "<table><tbody>";
+
+        for (let i = 0; i < rows; i++) {
+          tableHTML += "<tr>";
+          const cellTag = i === 0 && hasHeader ? "th" : "td";
+
+          for (let j = 0; j < cols; j++) {
+            const cellContent =
+              i === 0 && hasHeader
+                ? `Header ${j + 1}`
+                : `Cell ${i + 1},${j + 1}`;
+            tableHTML += `<${cellTag}>${cellContent}</${cellTag}>`;
+          }
+
+          tableHTML += "</tr>";
+        }
+
+        tableHTML += "</tbody></table>";
+
+        if (currentEditorIndex !== null) {
+          const editor = document.getElementById(
+            `editor-${currentEditorIndex}`,
+          );
+          if (editor) {
+            editor.focus();
+            document.execCommand("insertHTML", false, tableHTML);
+            componentData.accordion.sections[currentEditorIndex].content =
+              editor.innerHTML;
+            updatePreview();
+          }
+        }
+
+        closeTableModal();
+        showNotification("Table inserted");
+      }
+
+      // ============================================================================
+      // MACRO MODAL FUNCTIONS
+      // ============================================================================
+      function openMacroModal(editorIndex) {
+        currentEditorIndex = editorIndex;
+        const modal = document.getElementById("macroModal");
+        modal.classList.add("show");
+        document.body.classList.add("modal-open");
+        document.getElementById("customMacroCode").value = "";
+        document.getElementById("macroParameters").style.display = "none";
+        selectedMacroType = null;
+
+        document.querySelectorAll(".macro-card").forEach((card) => {
+          card.classList.remove("selected");
+        });
+
+        modal.onclick = function (e) {
+          if (e.target === modal) closeMacroModal();
+        };
+      }
+
+      function closeMacroModal() {
+        document.getElementById("macroModal").classList.remove("show");
+        document.body.classList.remove("modal-open");
+        currentEditorIndex = null;
+        selectedMacroType = null;
+      }
+
+      function selectMacro(type, clickedCard) {
+        selectedMacroType = type;
+        const macro = macroTemplates[type];
+
+        if (!macro) return;
+
+        const paramContainer = document.getElementById("macroParameters");
+        const paramFields = document.getElementById("macroParamFields");
+        const paramLabel = document.getElementById("macroParamLabel");
+
+        if (macro.params && macro.params.length > 0) {
+          paramLabel.textContent = `${macro.name} Settings`;
+          paramFields.innerHTML = macro.params
+            .map((param, index) => {
+              if (param.type === "select") {
+                return `
+                <div class="macro-param-field">
+                    <label>${param.label}</label>
+                    <select id="macroParam${index}">
+                        ${param.options.map((opt) => `<option value="${opt}" ${opt === param.default ? "selected" : ""}>${opt}</option>`).join("")}
+                    </select>
+                </div>
+              `;
+              } else if (param.type === "number") {
+                return `
+                <div class="macro-param-field">
+                    <label>${param.label}</label>
+                    <input type="number" id="macroParam${index}" value="${param.default}" min="1" max="10">
+                </div>
+              `;
+              } else if (param.type === "color") {
+                return `
+                <div class="macro-param-field">
+                    <label>${param.label}</label>
+                    <input type="color" id="macroParam${index}" value="${param.default}">
+                </div>
+              `;
+              } else {
+                return `
+                <div class="macro-param-field">
+                    <label>${param.label}</label>
+                    <input type="text" id="macroParam${index}" value="${param.default}" placeholder="${param.default}">
+                </div>
+              `;
+              }
+            })
+            .join("");
+          paramContainer.style.display = "block";
+        } else {
+          paramContainer.style.display = "none";
+        }
+
+        document.querySelectorAll(".macro-card").forEach((card) => {
+          card.classList.remove("selected");
+        });
+        if (clickedCard) {
+          clickedCard.classList.add("selected");
+        }
+      }
+
+      function insertMacro() {
+        let macroCode = document.getElementById("customMacroCode").value.trim();
+
+        if (!macroCode && selectedMacroType) {
+          const macro = macroTemplates[selectedMacroType];
+          if (macro) {
+            const params = {};
+            if (macro.params) {
+              macro.params.forEach((param, index) => {
+                const element = document.getElementById(`macroParam${index}`);
+                if (element) {
+                  params[param.name] = element.value;
+                }
+              });
+            }
+            macroCode = macro.template(params);
+          }
+        }
+
+        if (!macroCode) {
+          showNotification(
+            "Please select a macro or enter custom code",
+            "error",
+          );
+          return;
+        }
+
+        const encodedMacroCode = encodeMacroCode(macroCode);
+
+        const macroHTML = `<div class="confluence-macro" contenteditable="false" data-macro-code="${encodedMacroCode}" style="background: #f0f5ff; border: 2px dashed #0052cc; padding: 12px; margin: 10px 0; border-radius: 6px; font-family: monospace; font-size: 12px; white-space: pre-wrap; position: relative;">
+<div style="font-weight: 600; color: #0052cc; margin-bottom: 8px; font-size: 11px;">🔌 CONFLUENCE MACRO</div>
+<div style="word-break: break-all;">${escapeHtml(macroCode)}</div>
+<div style="font-size: 10px; color: #6b778c; margin-top: 8px; font-style: italic;">This macro will render in Confluence</div>
+</div>`;
+
+        if (currentEditorIndex !== null) {
+          const editor = document.getElementById(
+            `editor-${currentEditorIndex}`,
+          );
+          if (editor) {
+            editor.focus();
+            document.execCommand("insertHTML", false, macroHTML);
+            componentData.accordion.sections[currentEditorIndex].content =
+              editor.innerHTML;
+            updatePreview();
+          }
+        }
+
+        closeMacroModal();
+        showNotification("Macro inserted");
+      }
+
+      // ============================================================================
+      // PREVIEW
+      // ============================================================================
+      function updatePreview() {
+        const container = document.getElementById("previewContainer");
+
+        switch (currentComponent) {
+          case "accordion":
+            renderAccordionPreview(container);
+            break;
+          case "banner":
+            renderBannerPreview(container);
+            break;
+          case "cards":
+            renderCardsPreview(container);
+            break;
+          case "alert":
+            renderAlertPreview(container);
+            break;
+          case "tabs":
+            renderTabsPreview(container);
+            break;
+          case "divider":
+            renderDividerPreview(container);
+            break;
+        }
+      }
+
+      function renderAccordionPreview(container) {
+        const data = componentData.accordion;
+        if (data.sections.length === 0) {
+          container.innerHTML =
+            '<div class="empty-state"><div class="empty-state-icon">📋</div><p>Generate sections to see preview</p></div>';
+          return;
+        }
+
+        container.innerHTML = `<div class="colorful-accordion">
+        ${data.sections
+          .map(
+            (s, i) => `
+            <div class="accordion-section">
+                <input type="checkbox" id="preview-acc-${i}" class="acc-checkbox">
+                <label for="preview-acc-${i}" class="acc-header" style="background: ${s.color}">
+                    <span>${escapeHtml(s.title) || "Untitled"}</span>
+                    <span class="acc-icon">▼</span>
+                </label>
+                <div class="acc-content-wrapper" style="border-color: ${s.color}">
+                    <div class="acc-content">${s.content || "<p>No content</p>"}</div>
+                </div>
+            </div>
+        `,
+          )
+          .join("")}
+    </div>`;
+      }
+
+      function renderBannerPreview(container) {
+        const data = componentData.banner;
+        const ctaHtml = data.ctaText
+          ? `<a href="${escapeHtml(data.ctaUrl) || "#"}" class="cta-btn" style="background: ${data.ctaColor}; color: ${data.bgColor};">${escapeHtml(data.ctaText)}</a>`
+          : "";
+
+        container.innerHTML = `
+        <div class="preview-banner" style="background: ${data.bgColor}; color: ${data.textColor};">
+            <h1>${escapeHtml(data.title) || "Banner Title"}</h1>
+            <p>${escapeHtml(data.subtitle) || "Banner subtitle goes here"}</p>
+            ${ctaHtml}
+        </div>
+    `;
+      }
+
+      function renderCardsPreview(container) {
+        const data = componentData.cards;
+        if (data.cards.length === 0) {
+          container.innerHTML =
+            '<div class="empty-state"><div class="empty-state-icon">🃏</div><p>Generate cards to see preview</p></div>';
+          return;
+        }
+
+        container.innerHTML = `
+        <div class="preview-cards" style="grid-template-columns: repeat(${data.columns}, 1fr);">
+            ${data.cards
+              .map(
+                (c) => `
+                <div class="preview-card" style="border-top-color: ${c.color};">
+                    <div class="card-icon">${c.icon}</div>
+                    <h3>${escapeHtml(c.title) || "Card Title"}</h3>
+                    <p>${escapeHtml(c.description) || "Card description"}</p>
+                </div>
+            `,
+              )
+              .join("")}
+        </div>
+    `;
+      }
+
+      function renderAlertPreview(container) {
+        const data = componentData.alert;
+        const icons = { info: "ℹ️", success: "✅", warning: "⚠️", error: "❌" };
+
+        container.innerHTML = `
+        <div class="preview-alert ${data.type}">
+            <span class="alert-icon">${icons[data.type]}</span>
+            <div class="alert-content">
+                <h4>${escapeHtml(data.title) || "Alert Title"}</h4>
+                <p>${escapeHtml(data.content) || "Alert content goes here..."}</p>
+            </div>
+        </div>
+    `;
+      }
+
+      function renderTabsPreview(container) {
+        const data = componentData.tabs;
+        if (data.tabs.length === 0) {
+          container.innerHTML =
+            '<div class="empty-state"><div class="empty-state-icon">📑</div><p>Generate tabs to see preview</p></div>';
+          return;
+        }
+
+        container.innerHTML = `
+        <div class="preview-tabs-container">
+            <div class="preview-tabs-header">
+                ${data.tabs.map((t, i) => `<button class="preview-tab-btn ${i === 0 ? "active" : ""}" data-index="${i}">${escapeHtml(t.title)}</button>`).join("")}
+            </div>
+            <div class="preview-tab-content" id="previewTabContent">
+                ${escapeHtml(data.tabs[0]?.content) || "Tab content here..."}
+            </div>
+        </div>
+    `;
+
+        container.querySelectorAll(".preview-tab-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            container
+              .querySelectorAll(".preview-tab-btn")
+              .forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            document.getElementById("previewTabContent").textContent =
+              data.tabs[btn.dataset.index]?.content || "Tab content here...";
+          });
+        });
+      }
+
+      function renderDividerPreview(container) {
+        const data = componentData.divider;
+        container.innerHTML = `
+        <div style="padding: 40px 0;">
+            <hr style="border: none; border-top: ${data.thickness}px ${data.style} ${data.color}; margin: 0;">
+        </div>
+    `;
+      }
+
+      // ============================================================================
+      // CODE GENERATION
+      // ============================================================================
+      function generateCode() {
+        let code = "";
+
+        switch (currentComponent) {
+          case "accordion":
+            code = generateAccordionCode();
+            break;
+          case "banner":
+            code = generateBannerCode();
+            break;
+          case "cards":
+            code = generateCardsCode();
+            break;
+          case "alert":
+            code = generateAlertCode();
+            break;
+          case "tabs":
+            code = generateTabsCode();
+            break;
+          case "divider":
+            code = generateDividerCode();
+            break;
+        }
+
+        document.getElementById("codeOutput").textContent = code;
+        switchTab("code");
+        showNotification("Code generated!");
+      }
+
+      function generateAccordionCode() {
+        const data = componentData.accordion;
+        if (data.sections.length === 0) return "// No sections to generate";
+
+        return `<style>
+.colorful-accordion { max-width: 900px; margin: 20px 0; }
+.accordion-section { margin-bottom: 10px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+${data.sections.map((s, i) => `.accordion-section:nth-child(${i + 1}) .acc-header { background: ${s.color}; }`).join("\n")}
+.acc-checkbox { display: none; }
+.acc-header { color: white; padding: 18px 20px; cursor: pointer; font-size: 16px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease; user-select: none; }
+.acc-header:hover { filter: brightness(1.1); padding-left: 25px; }
+.acc-icon { font-size: 20px; transition: transform 0.3s ease; font-weight: bold; }
+.acc-checkbox:checked + .acc-header .acc-icon { transform: rotate(180deg); }
+.acc-content-wrapper { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease; background: white; }
+.acc-checkbox:checked ~ .acc-content-wrapper { max-height: 2000px; padding: 20px; border-left: 4px solid; }
+${data.sections.map((s, i) => `.accordion-section:nth-child(${i + 1}) .acc-checkbox:checked ~ .acc-content-wrapper { border-color: ${s.color}; }`).join("\n")}
+.acc-content { color: #333; line-height: 1.6; }
+.acc-content h3 { margin-top: 15px; margin-bottom: 10px; font-size: 18px; }
+.acc-content h3:first-child { margin-top: 0; }
+.acc-content p { margin-bottom: 12px; }
+.acc-content ul { margin-left: 20px; margin-bottom: 12px; }
+.acc-content li { margin-bottom: 6px; }
+.acc-content table { width: 100%; border-collapse: collapse; margin: 15px 0; border: 1px solid #ddd; }
+.acc-content table th { background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; border: 1px solid #ddd; }
+.acc-content table td { padding: 10px 12px; border: 1px solid #ddd; }
+.acc-content table tr:nth-child(even) { background: #f8f9fa; }
+.highlight-box { background: #f8f9fa; border-left: 4px solid #7CB342; padding: 15px; margin: 15px 0; border-radius: 4px; }
+</style>
+
+<div class="colorful-accordion">
+${data.sections
+  .map(
+    (s, i) => `  <div class="accordion-section">
+    <input type="checkbox" id="section${i + 1}" class="acc-checkbox">
+    <label for="section${i + 1}" class="acc-header">
+      <span>${escapeHtml(s.title)}</span>
+      <span class="acc-icon">▼</span>
+    </label>
+    <div class="acc-content-wrapper">
+      <div class="acc-content">${processContentForOutput(s.content)}</div>
+    </div>
+  </div>`,
+  )
+  .join("\n")}
+</div>`;
+      }
+
+      function generateBannerCode() {
+        const data = componentData.banner;
+        const ctaHtml = data.ctaText
+          ? `\n    <a href="${escapeHtml(data.ctaUrl) || "#"}" style="display: inline-block; padding: 12px 30px; background: ${data.ctaColor}; color: ${data.bgColor}; border-radius: 6px; font-weight: 600; text-decoration: none;">${escapeHtml(data.ctaText)}</a>`
+          : "";
+
+        return `<div style="background: ${data.bgColor}; color: ${data.textColor}; padding: 40px 30px; border-radius: 8px; text-align: center;">
+    <h1 style="margin: 0 0 10px 0; font-size: 28px;">${escapeHtml(data.title) || "Banner Title"}</h1>
+    <p style="margin: 0 0 20px 0; font-size: 16px; opacity: 0.9;">${escapeHtml(data.subtitle) || "Banner subtitle"}</p>${ctaHtml}
+</div>`;
+      }
+
+      function generateCardsCode() {
+        const data = componentData.cards;
+        if (data.cards.length === 0) return "// No cards to generate";
+
+        return `<style>
+.card-grid { display: grid; grid-template-columns: repeat(${data.columns}, 1fr); gap: 20px; }
+.feature-card { background: white; border-radius: 8px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; border-top: 4px solid; }
+.feature-card .icon { font-size: 40px; margin-bottom: 15px; }
+.feature-card h3 { margin: 0 0 10px 0; font-size: 18px; color: #4A4A4A; }
+.feature-card p { margin: 0; color: #6E6E6E; font-size: 14px; line-height: 1.5; }
+</style>
+
+<div class="card-grid">
+${data.cards
+  .map(
+    (c) => `  <div class="feature-card" style="border-top-color: ${c.color};">
+    <div class="icon">${c.icon}</div>
+    <h3>${escapeHtml(c.title) || "Card Title"}</h3>
+    <p>${escapeHtml(c.description) || "Card description"}</p>
+  </div>`,
+  )
+  .join("\n")}
+</div>`;
+      }
+
+      function generateAlertCode() {
+        const data = componentData.alert;
+        const styles = {
+          info: { bg: "#ebf8ff", border: "#3182ce", icon: "ℹ️" },
+          success: { bg: "#f0fff4", border: "#38a169", icon: "✅" },
+          warning: { bg: "#fffaf0", border: "#dd6b20", icon: "⚠️" },
+          error: { bg: "#fff5f5", border: "#e53e3e", icon: "❌" },
+        };
+        const s = styles[data.type];
+
+        return `<div style="background: ${s.bg}; border-left: 4px solid ${s.border}; padding: 20px; border-radius: 8px; display: flex; gap: 15px; align-items: flex-start;">
+    <span style="font-size: 24px;">${s.icon}</span>
+    <div>
+        <h4 style="margin: 0 0 5px 0; font-size: 16px; color: #333;">${escapeHtml(data.title) || "Alert Title"}</h4>
+        <p style="margin: 0; font-size: 14px; color: #666; line-height: 1.5;">${escapeHtml(data.content) || "Alert content"}</p>
+    </div>
+</div>`;
+      }
+
+      function generateTabsCode() {
+        const data = componentData.tabs;
+        if (data.tabs.length === 0) return "// No tabs to generate";
+
+        return `<style>
+.tabs-container { border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
+.tabs-header { display: flex; background: #f7fafc; border-bottom: 1px solid #e2e8f0; }
+.tab-btn { padding: 12px 20px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #6E6E6E; }
+.tab-btn.active { background: white; color: #00ACC1; border-bottom: 2px solid #00ACC1; }
+.tab-pane { display: none; padding: 20px; }
+.tab-pane.active { display: block; }
+</style>
+
+<div class="tabs-container">
+    <div class="tabs-header">
+${data.tabs.map((t, i) => `        <button class="tab-btn${i === 0 ? " active" : ""}" onclick="showTab(${i})">${escapeHtml(t.title)}</button>`).join("\n")}
+    </div>
+${data.tabs.map((t, i) => `    <div class="tab-pane${i === 0 ? " active" : ""}" id="tab-${i}">${escapeHtml(t.content) || "Tab content"}</div>`).join("\n")}
+</div>
+
+<script>
+function showTab(index) {
+    document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === index));
+    document.querySelectorAll('.tab-pane').forEach((p, i) => p.classList.toggle('active', i === index));
+}
+<\/script>`;
+      }
+
+      function generateDividerCode() {
+        const data = componentData.divider;
+        return `<hr style="border: none; border-top: ${data.thickness}px ${data.style} ${data.color}; margin: 20px 0;">`;
+      }
+
+      // ============================================================================
+      // UTILITIES
+      // ============================================================================
+      function switchTab(tab) {
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) => t.classList.toggle("active", t.dataset.tab === tab));
+        document.getElementById("previewView").style.display =
+          tab === "preview" ? "block" : "none";
+        document.getElementById("codeView").style.display =
+          tab === "code" ? "block" : "none";
+      }
+
+      function resetComponent() {
+        if (confirm("Reset this component?")) {
+          switch (currentComponent) {
+            case "accordion":
+              componentData.accordion = { sections: [] };
+              break;
+            case "banner":
+              componentData.banner = {
+                title: "",
+                subtitle: "",
+                bgColor: "#6B2976",
+                textColor: "#ffffff",
+                ctaText: "",
+                ctaUrl: "",
+                ctaColor: "#ffffff",
+              };
+              break;
+            case "cards":
+              componentData.cards = { columns: 3, cards: [] };
+              break;
+            case "alert":
+              componentData.alert = { type: "info", title: "", content: "" };
+              break;
+            case "tabs":
+              componentData.tabs = { tabs: [] };
+              break;
+            case "divider":
+              componentData.divider = {
+                style: "solid",
+                color: "#e2e8f0",
+                thickness: 2,
+              };
+              break;
+          }
+          renderBuilder();
+          updatePreview();
+          showNotification("Reset complete");
+        }
+      }
+
+      function copyCode() {
+        const code = document.getElementById("codeOutput").textContent;
+        if (code.includes("// No") || code.includes("// Click")) {
+          showNotification("Generate code first", "error");
+          return;
+        }
+        navigator.clipboard
+          .writeText(code)
+          .then(() => showNotification("Copied to clipboard!"))
+          .catch(() => showNotification("Copy failed", "error"));
+      }
+
+      function saveTemplate() {
+        showNotification("Template saved!");
+      }
+
+      function showNotification(message, type = "success") {
+        const el = document.getElementById("notification");
+        el.textContent = message;
+        el.className = `notification ${type} show`;
+        setTimeout(() => el.classList.remove("show"), 3000);
+      }
+
+      // Initialize
+      window.onload = init;
+    </script>
+  </body>
+</html>
